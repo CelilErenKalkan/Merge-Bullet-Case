@@ -1,21 +1,73 @@
+using System.Collections;
+using Managers;
 using UnityEngine;
 
 namespace Gameplay
 {
-    public class Character : MonoBehaviour
+    public class Character : MonoSingleton<Character>
     {
+        private LevelManager levelManager;
+        private GameManager gameManager;
         [SerializeField] private float forwardSpeed = 10f;
         [SerializeField] private float sideSpeed = 18f;
+        
+        
+        private Bullet bulletRef;
+        public Transform firePoint;
+        public int hitValue;
+        public int collectedMoney;
 
+        public bool isTripleShot;
+        public bool isPlay;
         private bool isTouching = false;
         private Vector3 firstTouch;
 
+        private void Start()
+        {
+            levelManager = LevelManager.Instance;
+            gameManager = GameManager.Instance;
+            StartCoroutine(WaitForFire());
+        }
+        
         private void Update()
         {
+            if (!gameManager.isPlayable) return;
+            
             HandleInput();
         
             if (isTouching)
                 MovementController();
+        }
+        
+        private void CallBullet()
+        { 
+            Pool.Instance.SpawnObject(Vector3.zero, PoolItemType.Bullets, firePoint);
+        }
+        
+        private IEnumerator WaitForFire()
+        {
+            if (isTouching && isPlay)
+            {
+                CallBullet();
+                bulletRef.ForwardMovement(hitValue);
+
+                if (isTripleShot)
+                {
+                    //Right Bullet
+                    CallBullet();
+                    bulletRef.TripleRightMovement(hitValue);
+
+                    //LeftBullet Bullet
+                    CallBullet();
+                    bulletRef.TripleLeftMovement(hitValue);
+
+                }
+
+
+                yield return new WaitForSeconds(levelManager.fireRate);
+            }
+            yield return new WaitForSeconds(0.05f);
+            StartCoroutine(WaitForFire());
         }
 
         private void HandleInput()

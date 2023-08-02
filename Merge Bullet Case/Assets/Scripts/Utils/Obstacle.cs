@@ -7,9 +7,6 @@ public enum ObstacleType
     Coin,
     Cube,
     FinishLine,
-    Grid,
-    Character,
-    BulletRange
 }
 
 public class Obstacle : MonoBehaviour

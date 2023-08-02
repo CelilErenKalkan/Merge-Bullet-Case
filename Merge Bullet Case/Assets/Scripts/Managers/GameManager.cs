@@ -1,30 +1,27 @@
 using System.Collections.Generic;
-using System.IO;
 using Editors;
 using Gameplay;
 using UnityEngine;
 using Utils;
+using Grid = UnityEngine.Grid;
 
 namespace Managers
 {
-    public class GameManager : MonoBehaviour
+    public class GameManager : MonoSingleton<GameManager>
     {
-        public LevelEditor levelEditor;
-        public DataBase dataBase;
+        private LevelManager levelManager;
         private GridCreator gridCreator;
+
+        [HideInInspector] public bool isPlayable;
     
         private GameObject currentBullet;
         private Bullet currentBulletController;
         public List<Bullet> bullets = new List<Bullet>();
 
-        private void Awake()
-        {
-            ObjectManager.GameManager = this;
-        }
-
         private void Start()
         {
-            gridCreator = ObjectManager.GridCreator;
+            levelManager = LevelManager.Instance;
+            gridCreator = GridCreator.Instance;
             CreateBullets();
         }
 
@@ -33,34 +30,39 @@ namespace Managers
         
         }
 
-        public void CreateBullets()
+        public void SetPlayable(bool isSet)
         {
-            foreach (var bulletSave in dataBase.bulletSaves)
+            isPlayable = isSet;
+        }
+
+        private void CreateBullets()
+        {
+            foreach (var bulletSave in levelManager.dataBase.bulletSaves)
             {
-                GameObject bulletPrefab = levelEditor.bulletDatas[bulletSave.type - 1].prefab;
-                GameObject currentBullet = Instantiate(bulletPrefab);
-                Bullet currentBulletController = currentBullet.GetComponent<Bullet>();
+                GameObject bulletPrefab = levelManager.levelEditor.bulletDatas[bulletSave.type - 1].prefab;
+                GameObject currentBulletObject = Instantiate(bulletPrefab, gridCreator.grids[bulletSave.GridNum].transform, true);
+                Bullet currentBulletScript = currentBulletObject.GetComponent<Bullet>();
         
                 // Set bullet properties
-                bullets.Add(currentBulletController);
-                currentBulletController.bulletType = levelEditor.bulletDatas[bulletSave.type - 1].type;
-                currentBulletController.hitValue = levelEditor.bulletDatas[bulletSave.type - 1].hitValue;
-                currentBulletController.hp = levelEditor.bulletDatas[bulletSave.type - 1].hp;
+                bullets.Add(currentBulletScript);
+                currentBulletScript.bulletType = levelManager.levelEditor.bulletDatas[bulletSave.type - 1].type;
+                currentBulletScript.hitValue = levelManager.levelEditor.bulletDatas[bulletSave.type - 1].hitValue;
+                currentBulletScript.hp = levelManager.levelEditor.bulletDatas[bulletSave.type - 1].hp;
         
                 // Get and set grid controller
-                GridController currentGridController = gridCreator.grids[bulletSave.GridNum].GetComponent<GridController>();
-                currentBulletController.GetGridController();
-                currentBulletController.gridNum = bulletSave.GridNum;
-                currentBulletController.pos = currentBulletController.currentGridController.pos;
+                var currentGridController = gridCreator.grids[bulletSave.GridNum].GetComponent<Utils.Grid>();
+                currentBulletScript.GetGridController();
+                currentBulletScript.gridNum = bulletSave.GridNum;
+                currentBulletScript.pos = currentBulletScript.currentGridController.pos;
 
                 // Set Grid Settings
-                currentGridController.bulletType = currentBulletController.bulletType;
+                currentGridController.bulletType = currentBulletScript.bulletType;
                 currentGridController.gridSit = GridSit.Fill;
                 gridCreator.emptyGrids.Remove(currentGridController.gameObject);
         
                 // Parent bullet to the grid
-                currentBullet.transform.SetParent(currentGridController.transform);
-                currentBullet.transform.localPosition = Vector3.zero;
+                currentBulletObject.transform.SetParent(currentGridController.transform);
+                currentBulletObject.transform.localPosition = Vector3.zero;
             }
         }
 
@@ -78,9 +80,9 @@ namespace Managers
 
             // Set properties of the merged bullet
             Bullet mergedBullet = firstBullet;
-            mergedBullet.bulletType = levelEditor.bulletDatas[firstBullet.bulletType].type;
-            mergedBullet.hitValue = levelEditor.bulletDatas[firstBullet.bulletType].hitValue;
-            mergedBullet.hp = levelEditor.bulletDatas[firstBullet.bulletType].hp;
+            mergedBullet.bulletType = levelManager.levelEditor.bulletDatas[firstBullet.bulletType].type;
+            mergedBullet.hitValue = levelManager.levelEditor.bulletDatas[firstBullet.bulletType].hitValue;
+            mergedBullet.hp = levelManager.levelEditor.bulletDatas[firstBullet.bulletType].hp;
             mergedBullet.pos = secondBullet.currentGridController.pos;
             mergedBullet.GetGridController();
 
@@ -94,40 +96,6 @@ namespace Managers
             // Optionally, you may destroy the original bullets
             Destroy(firstBullet.gameObject);
             Destroy(secondBullet.gameObject);
-        }
-
-        public void SaveSystem()
-        {
-            if (dataBase == null)
-            {
-                Debug.LogError("No dataBase reference found. Unable to save.");
-                return;
-            }
-
-            // Clear the existing bullet saves (if needed)
-            dataBase.bulletSaves.Clear();
-
-            // Save the bullet data
-            foreach (var bullet in bullets)
-            {
-                if (bullet == null)
-                {
-                    Debug.LogWarning("Null bullet found. Skipping save for this bullet.");
-                    continue;
-                }
-
-                dataBase.bulletSaves.Add(new DataBase.BulletSave
-                {
-                    type = bullet.bulletType,
-                    GridNum = bullet.gridNum,
-                    pos = bullet.pos,
-                    hp = bullet.hp,
-                    hitValue = bullet.hitValue
-                });
-            }
-
-            // Save the dataBase to a JSON file
-            FileHandler.SaveToJson(dataBase, "data");
         }
     }
 }

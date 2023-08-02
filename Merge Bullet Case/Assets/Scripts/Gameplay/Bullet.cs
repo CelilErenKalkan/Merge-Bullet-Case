@@ -2,17 +2,20 @@ using System.Collections;
 using Managers;
 using UnityEngine;
 using Utils;
+using Grid = Utils.Grid;
 
 namespace Gameplay
 {
     public class Bullet : MonoBehaviour
     {
         private GameManager gameManager;
+        private LevelManager levelManager;
         private GridCreator gridCreator;
-        [HideInInspector] public GridController currentGridController, targetGridController;
+        
+        [HideInInspector] public Grid currentGridController, targetGridController;
         public int bulletType, hitValue, gridNum, hp;
         public Vector2 pos;
-        public bool isUnbeatable, isGameBullet, isGunBullet;
+        public bool isGameBullet, isGunBullet;
 
         private Bullet targetBulletController;
         Vector3 worldPosition;
@@ -23,8 +26,9 @@ namespace Gameplay
 
         private void Start()
         {
-            gameManager = ObjectManager.GameManager;
-            gridCreator = ObjectManager.GridCreator;
+            gameManager = GameManager.Instance;
+            levelManager = LevelManager.Instance;
+            gridCreator = GridCreator.Instance;
         }
 
         private void OnEnable()
@@ -44,10 +48,9 @@ namespace Gameplay
                 SetRot();
         }
 
-        #region Movement
-
         private void OnMouseDown()
         {
+            Debug.Log(gameObject);
             if (!isGameBullet)
                 isOnTouch = true;
         }
@@ -79,12 +82,12 @@ namespace Gameplay
 
         public void GetGridController()
         {
-            currentGridController = transform.parent.GetComponent<GridController>();
+            currentGridController = transform.parent.GetComponent<Grid>();
         }
 
         private void PutDown()
         {
-            currentGridController = transform.parent.GetComponent<GridController>();
+            currentGridController = transform.parent.GetComponent<Grid>();
             if (targetGridController.gridSit.Equals(GridSit.Empty)) //Empty Movement
             {
                 //Grid Events
@@ -104,7 +107,7 @@ namespace Gameplay
                     targetGridController.gameObject != currentGridController.gameObject) //Merge
                 {
                     targetBulletController = targetGridController.transform.GetChild(0).GetComponent<Bullet>();
-                    if (bulletType < gameManager.levelEditor.bulletDatas.Length)
+                    if (bulletType < levelManager.levelEditor.bulletDatas.Length)
                         gameManager.Merge(this, targetBulletController);
                     else
                         transform.localPosition = Vector3.zero;
@@ -114,7 +117,7 @@ namespace Gameplay
             }
 
             gridNum = transform.parent.GetSiblingIndex();
-            gameManager.SaveSystem();
+            levelManager.SaveSystem();
         }
 
         public void ResetGrid()
@@ -158,19 +161,9 @@ namespace Gameplay
             {
                 transform.position += ((Vector3.forward - Vector3.right * 0.3f) * bulletSpeed * Time.deltaTime);
             }
-
-            StartCoroutine(WaitOpenBullet());
-
         }
 
-        IEnumerator WaitOpenBullet()
-        {
-            yield return new WaitForSeconds(0.15f);
-            transform.GetChild(0).gameObject.SetActive(true);
-            transform.GetChild(1).gameObject.SetActive(true);
-        }
-
-        public void SetRot() //Updatede �al��acak
+        public void SetRot()
         {
             previousXPos = transform.position.x;
             previousZPos = transform.position.z;
@@ -182,57 +175,40 @@ namespace Gameplay
             nextZPos = transform.position.z;
         }
 
-        #endregion
-
-        #region Collision
 
         private void OnTriggerEnter(Collider other)
         {
-            if (!other.TryGetComponent(out Obstacle obstacle)) return;
-            
-            if (obstacle.obstacleType == ObstacleType.Grid)
+            if (other.TryGetComponent(out Grid grid))
             {
-                targetGridController = other.GetComponent<GridController>();
+                targetGridController = grid;
             }
-
-            if (obstacle.obstacleType == ObstacleType.Character)
+            else if (other.TryGetComponent(out Character character))
             {
-                other.GetComponent<CharacterManager>().hitValue += hitValue;
-                levelManager.StartCharacterMovement(this);
-                other.GetComponent<CharacterManager>().isPlay = true;
-                Destroy(gameObject);
+                character.hitValue += hitValue;
+                character.isPlay = true;
+                levelManager.StartCharacterMovement();
+                DeactivateBullet();
             }
-
-            if (obstacle.obstacleType == ObstacleType.BulletRange)
+            else
             {
-                ReplaceQue();
+                DeactivateBullet();
             }
         }
 
-        #endregion
-
-        public void DestroyEvent()
-        {
-            if (!isUnbeatable)
-            {
-                Destroy(gameObject);
-            }
-        }
-
-        public void ReplaceQue()
+        public void DeactivateBullet()
         {
             isForwardFire = false;
             isRightTripleFire = false;
             isLeftTripleFire = false;
             StopCoroutine(StopBullet);
 
-            poolingManager.replacingBullet(transform.gameObject);
+            Pool.Instance.DeactivateObject(gameObject, PoolItemType.Bullets);
         }
 
         IEnumerator WaitStopBullet()
         {
             yield return new WaitForSeconds(3);
-            ReplaceQue();
+            DeactivateBullet();
         }
     }
 }
