@@ -208,43 +208,5 @@ namespace Managers
             // Save the dataBase to a JSON file
             FileHandler.SaveToJson(dataBase, "data");
         }
-        
-        public void AddBullet()
-        {
-            if (gridCreator.emptyGrids.Count > 0 &&
-                dataBase.money >= levelEditor.bulletPrice)
-            {
-                int rndGrid = Random.Range(0, gridCreator.emptyGrids.Count);
-
-                //Create Bullet
-                var tempBullet = Instantiate(levelEditor
-                    .bulletDatas[levelEditor.CreateingBulletType - 1].prefab);
-                Debug.Log(tempBullet);
-                var bullet = tempBullet.GetComponent<Bullet>();
-                var tempGrid = gridCreator.emptyGrids[rndGrid];
-                var grid = tempGrid.GetComponent<Grid>();
-
-                //Set grid properties
-                grid.bulletType = levelEditor.bulletDatas[levelEditor.CreateingBulletType - 1]
-                    .type;
-                gridCreator.emptyGrids.Remove(tempGrid);
-                grid.gridSit = GridSit.Fill;
-
-                //Set bullet properties
-                tempBullet.transform.SetParent(tempGrid.transform);
-                tempBullet.transform.localPosition = Vector3.zero;
-                bullet.gridNum = gridCreator.grids.IndexOf(tempGrid);
-                bullet.bulletType = levelEditor.CreateingBulletType;
-                bullet.hitValue = levelEditor.bulletDatas[levelEditor.CreateingBulletType - 1]
-                    .hitValue;
-                bullet.hp = levelEditor.bulletDatas[levelEditor.CreateingBulletType - 1].hp;
-                bullet.pos = grid.pos;
-                bullet.GetGridController();
-
-                gameManager.bullets.Add(bullet);
-                
-                SaveSystem();
-            }
-        }
     }
 }

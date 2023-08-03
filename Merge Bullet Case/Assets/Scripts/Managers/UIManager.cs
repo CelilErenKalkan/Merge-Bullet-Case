@@ -1,4 +1,5 @@
 using DG.Tweening;
+using Editors;
 using Gameplay;
 using TMPro;
 using UnityEngine;
@@ -37,7 +38,7 @@ namespace Managers
 
         public void AddBullet()
         {
-            levelManager.AddBullet();
+            BulletEditor.AddBullet();
             //SetMoneyText(-levelManager.levelEditor.bulletPrice);
         }
     }

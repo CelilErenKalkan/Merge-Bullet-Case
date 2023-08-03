@@ -1,4 +1,5 @@
 using System.Collections;
+using Editors;
 using Managers;
 using UnityEngine;
 using Utils;
@@ -21,7 +22,6 @@ namespace Gameplay
         Vector3 worldPosition;
         private bool isOnTouch, isForwardFire, isRightTripleFire, isLeftTripleFire;
         public float bulletSpeed;
-        Coroutine StopBullet = null;
         private float previousXPos, previousZPos, nextXPos, nextZPos;
 
         private void Start()
@@ -36,7 +36,6 @@ namespace Gameplay
             if (isGunBullet)
             {
                 transform.localScale = Vector3.one;
-                StopBullet = StartCoroutine(WaitStopBullet());
             }
         }
 
@@ -50,7 +49,6 @@ namespace Gameplay
 
         private void OnMouseDown()
         {
-            Debug.Log(gameObject);
             if (!isGameBullet)
                 isOnTouch = true;
         }
@@ -106,9 +104,9 @@ namespace Gameplay
                 if (bulletType.Equals(targetGridController.bulletType) &&
                     targetGridController.gameObject != currentGridController.gameObject) //Merge
                 {
-                    targetBulletController = targetGridController.transform.GetChild(0).GetComponent<Bullet>();
+                    targetBulletController = targetGridController.transform.GetChild(1).GetComponent<Bullet>();
                     if (bulletType < levelManager.levelEditor.bulletDatas.Length)
-                        gameManager.Merge(this, targetBulletController);
+                        BulletEditor.Merge(this, targetBulletController);
                     else
                         transform.localPosition = Vector3.zero;
                 }
@@ -189,7 +187,7 @@ namespace Gameplay
                 levelManager.StartCharacterMovement();
                 DeactivateBullet();
             }
-            else
+            else if (!other.TryGetComponent(out Bullet bullet))
             {
                 DeactivateBullet();
             }
@@ -200,7 +198,7 @@ namespace Gameplay
             isForwardFire = false;
             isRightTripleFire = false;
             isLeftTripleFire = false;
-            StopCoroutine(StopBullet);
+            StopCoroutine(WaitStopBullet());
 
             Pool.Instance.DeactivateObject(gameObject, PoolItemType.Bullets);
         }
