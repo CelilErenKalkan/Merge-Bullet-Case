@@ -31,8 +31,6 @@ namespace Gameplay
         
         private void Update()
         {
-            if (!gameManager.isPlayable) return;
-            
             HandleInput();
         
             if (isTouching)
@@ -41,7 +39,8 @@ namespace Gameplay
         
         private void CallBullet()
         { 
-            Pool.Instance.SpawnObject(Vector3.zero, PoolItemType.Bullets, firePoint);
+            var bulletObject = Pool.Instance.SpawnObject(Vector3.zero, PoolItemType.Bullets, firePoint);
+            if (bulletObject.TryGetComponent(out Bullet bullet)) bulletRef = bullet;
         }
         
         private IEnumerator WaitForFire()

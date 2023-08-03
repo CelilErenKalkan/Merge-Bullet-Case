@@ -21,6 +21,7 @@ namespace Gameplay
         private Bullet targetBulletController;
         Vector3 worldPosition;
         private bool isOnTouch, isForwardFire, isRightTripleFire, isLeftTripleFire;
+        [HideInInspector] public bool isUnbeatable;
         public float bulletSpeed;
         private float previousXPos, previousZPos, nextXPos, nextZPos;
 
@@ -195,6 +196,7 @@ namespace Gameplay
 
         public void DeactivateBullet()
         {
+            if (isUnbeatable) return;
             isForwardFire = false;
             isRightTripleFire = false;
             isLeftTripleFire = false;

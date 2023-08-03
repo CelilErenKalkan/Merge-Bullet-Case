@@ -7,12 +7,11 @@ namespace Managers
         private Vector3 targetDistance;
         public float followSpeed;
         public Transform target;
-        private Transform firstTarget;
+        [SerializeField] private Transform firstTarget;
         public bool isFollow;
 
-        void Start()
+        private void Start()
         {
-            firstTarget = GameObject.FindGameObjectWithTag("StartBulletsParent").transform;
             SetTarget(firstTarget);
         }
 

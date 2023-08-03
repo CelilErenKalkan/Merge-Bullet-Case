@@ -90,15 +90,11 @@ namespace Managers
             {
                 if (characterList[i].isPlay)
                 {
-                    characterList[i].transform.SetParent(character.transform.GetChild(0));
-                    characterList[i].transform.DOMove(character.transform.GetChild(1).GetChild(GunNum).position, 0.95f);
-                    GunNum++;
                     characterList[i].GetComponent<Collider>().enabled = false;
                 }
             }
             yield return new WaitForSeconds(1);
             cameraManager.SetTarget(character.transform);
-            gameManager.SetPlayable(true);
         }
 
         public void StartLevel()
