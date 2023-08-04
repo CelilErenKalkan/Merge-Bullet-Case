@@ -1,24 +1,27 @@
 using UnityEngine;
 
-public class MonoSingleton<T> : MonoBehaviour where T : MonoSingleton<T>
+namespace Editors
 {
-    private static volatile T _instance;
-
-    private bool _isInitialized;
-
-    public static T Instance
+    public class MonoSingleton<T> : MonoBehaviour where T : MonoSingleton<T>
     {
-        get
+        private static volatile T _instance;
+
+        private bool isInitialized;
+
+        public static T Instance
         {
-            if (_instance != null) return _instance;
-            _instance = FindObjectOfType(typeof(T)) as T;
-            if (_instance != null && !_instance._isInitialized) Instance.Initialize();
-            return _instance;
+            get
+            {
+                if (_instance != null) return _instance;
+                _instance = FindObjectOfType(typeof(T)) as T;
+                if (_instance != null && !_instance.isInitialized) Instance.Initialize();
+                return _instance;
+            }
         }
-    }
 
-    protected virtual void Initialize()
-    {
-        _isInitialized = true;
+        protected virtual void Initialize()
+        {
+            isInitialized = true;
+        }
     }
 }

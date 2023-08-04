@@ -1,21 +1,23 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "DataBase")]
-public class DataBase : ScriptableObject
+namespace Editors
 {
-    [System.Serializable]
-    public struct BulletSave
+    [CreateAssetMenu(fileName = "DataBase")]
+    public class DataBase : ScriptableObject
     {
-        public int type;
-        public int GridNum;
-        public int hp;
-        public int hitValue;
-        public Vector2 pos;
-    }
+        [System.Serializable]
+        public struct BulletSave
+        {
+            public int type;
+            public int GridNum;
+            public int hp;
+            public int hitValue;
+            public Vector2 pos;
+        }
 
-    public List<BulletSave> bulletSaves = new List<BulletSave>();
-    public int money;
-    public float highScore;
+        public List<BulletSave> bulletSaves = new List<BulletSave>();
+        public int money;
+        public float highScore;
+    }
 }

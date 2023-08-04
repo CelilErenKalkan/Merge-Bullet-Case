@@ -20,13 +20,10 @@ namespace Doors
         private int rnd;
         private bool isFirstColor;
         private Vector3 startSize;
-
-        #region Variables for  door Object
+        
         public TMPro.TextMeshPro valueText;
         public TMPro.TextMeshPro nameText;
         public GameObject textBG, doorBG;
-        public Bullet tempBulletController;
-        #endregion
 
         public void SetGeneralProperties()
         {

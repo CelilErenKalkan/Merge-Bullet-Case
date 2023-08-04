@@ -4,49 +4,51 @@ using DG.Tweening;
 using Editors;
 using Gameplay;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using Utils;
-using Grid = Utils.Grid;
+using Random = UnityEngine.Random;
 
 namespace Managers
 {
     public class LevelManager : MonoSingleton<LevelManager>
     {
-        private Character character;
+        // private variables.
         private CameraManager cameraManager;
         private GameManager gameManager;
-        private GridCreator gridCreator;
+        private Pool pool;
+        private StartBullets startBullets;
+        
+        [HideInInspector] public Vector3 playerStartPos;
+
+        [Header("Character Variables")]
+        private Character character;
+        private bool isStartCharacterMovement;
+        public List<Character> characterList = new List<Character>();
+
+        [Header("Serialization")]
+        public GameObject finishLine;
+        public Transform platform;
+        
+        [Header("Level Editor and Database Variables")]
         public LevelEditor levelEditor;
         public DataBase dataBase;
 
-        private bool isStartCharacterMovement;
-        public List<Character> characterList = new List<Character>();
-        public Transform camPos;
-
-
-        private StartBullets startBullets;
-        private int GunNum;
+        [Header("Bullet Variables")]
         public float bulletSize, fireRate;
 
-
-        [HideInInspector] public Vector3 playerStartPos;
-        public GameObject finishLine;
-        public Transform platform;
-
-        //Door
+        [Header("Doors Variables")]
         public int doorNum, doorDistance;
-        private int doorRndPos, rndDoor;
-        public GameObject[] doors;
         private GameObject currentDoor;
+        [SerializeField] private GameObject levelObject;
 
+        [Header("Boxes Variables")]
+        public int boxNum;
+        public int boxDistance, boxHp;
+        
         //Box
-        public int boxNum, boxDistance, boxHp;
-        public GameObject boxPrefab;
         private GameObject currenBox;
         private float boxXPos;
-        public int goldValue;
 
-        //High Score
+        [Header("Score Variables")]
+        public int goldValue;
         public GameObject highScoreObject;
 
         private void Awake()
@@ -54,16 +56,26 @@ namespace Managers
             DOTween.SetTweensCapacity(500, 50);
         }
 
-        private void Start()
+        private void OnEnable()
         {
-            character = Character.Instance;
-            cameraManager = CameraManager.Instance;
-            gameManager = GameManager.Instance;
-            gridCreator = GridCreator.Instance;
+            Actions.LevelStart += StartLevel;
+        }
+        
+        private void OnDisable()
+        {
+            Actions.LevelStart -= StartLevel;
         }
 
-        public void StartCharacterMovement()
+        private void Start()
         {
+            BulletEditor.SetBulletEditor();
+            gameManager = GameManager.Instance;
+            pool = Pool.Instance;
+        }
+
+        public void StartCharacterMovement(Character currentCharacter)
+        {
+            character = currentCharacter;
             if (!isStartCharacterMovement)
             {
                 isStartCharacterMovement = true;
@@ -75,10 +87,6 @@ namespace Managers
         {
             cameraManager.isFollow = false;
             yield return new WaitForSeconds(0.75f);
-            
-            //Set cam Settings
-            cameraManager.transform.DOMove(camPos.position, 0.95f);
-            cameraManager.transform.DORotate(camPos.transform.eulerAngles, 0.75f);
 
             //Set Bullet Settings
             startBullets = StartBullets.Instance;
@@ -86,24 +94,30 @@ namespace Managers
             startBullets.gameObject.SetActive(false);
 
             //Set Character Settings
-            for (int i = characterList.Count - 1; i >= 0; i--)
+            for (var i = characterList.Count - 1; i >= 0; i--)
             {
                 if (characterList[i].isPlay)
                 {
-                    characterList[i].GetComponent<Collider>().enabled = false;
+                    var z = characterList[i].transform.position.z;
+                    characterList[i].transform.DOMove(new Vector3(0, 1, z + 5), 0.95f);
                 }
             }
+            
             yield return new WaitForSeconds(1);
+            
             cameraManager.SetTarget(character.transform);
+            gameManager.SetPlayable(true);
         }
 
-        public void StartLevel()
+        private void StartLevel()
         {
             FileHandler.SaveToJson(dataBase, "data");  
             if (gameManager.bullets.Count > 0)
             {
                 DOTween.KillAll();
-                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+                levelObject.SetActive(true);
+                cameraManager = CameraManager.Instance;
+                BulletEditor.SetBulletEditor();
             }
         }
         
@@ -117,17 +131,18 @@ namespace Managers
 
         private void SetDoors()
         {
-            for (int i = 0; i < doorNum; i++)
+            for (var i = 0; i < doorNum; i++)
             {
-                rndDoor = Random.Range(0, doors.Length);
-                currentDoor = Instantiate(doors[rndDoor], null, true);
+                currentDoor = pool.SpawnObject(Vector3.zero, PoolItemType.Doors, null);
 
-                doorRndPos = Random.Range(0, 2);
-
-                if (doorRndPos == 0) //Put Left
-                    currentDoor.transform.position = new Vector3(-2.5f, -2.25f, playerStartPos.z + doorDistance + (i * doorDistance));
-                if (doorRndPos == 1) //Put Right
-                    currentDoor.transform.position = new Vector3(2.5f, -2.25f, playerStartPos.z + doorDistance + (i * doorDistance));
+                currentDoor.transform.position = Random.Range(0, 2) switch
+                {
+                    //Put Left
+                    0 => new Vector3(-2.5f, -2.25f, playerStartPos.z + doorDistance + (i * doorDistance)),
+                    //Put Right
+                    1 => new Vector3(2.5f, -2.25f, playerStartPos.z + doorDistance + (i * doorDistance)),
+                    _ => currentDoor.transform.position
+                };
             }
 
             finishLine.transform.position = new Vector3(0, 0.5f, currentDoor.transform.position.z + doorDistance);
@@ -135,19 +150,19 @@ namespace Managers
 
         private void SetBoxes()
         {
-            for (int i = 0; i < boxNum; i++)
+            for (var i = 0; i < boxNum; i++)
             {
-                for (int j = 0; j < 3; j++)
+                for (var j = 0; j < 3; j++)
                 {
-                    currenBox = Instantiate(boxPrefab, null, true);
-                    currenBox.GetComponent<Box>().hp = boxHp + boxHp * i;
+                    currenBox = pool.SpawnObject(Vector3.zero, PoolItemType.Boxes, null);
+                    if (currenBox.TryGetComponent(out Box box)) box.hp = boxHp + boxHp * i;
 
-                    if (j == 0)
-                        boxXPos = -3.5f;
-                    else if (j == 1)
-                        boxXPos = 0;
-                    else
-                        boxXPos = 3.5f;
+                    boxXPos = j switch
+                    {
+                        0 => -3.5f,
+                        1 => 0,
+                        _ => 3.5f
+                    };
                     currenBox.transform.position = new Vector3(boxXPos, 2.55f, finishLine.transform.position.z + boxDistance + boxDistance * i);
                 }
             }
@@ -158,19 +173,12 @@ namespace Managers
         
         private void SetHighScore()
         {
-            if (dataBase.highScore != 0)
-            {
-                highScoreObject.transform.position = new Vector3(-5, 0, dataBase.highScore);
-                highScoreObject.SetActive(true);
-            }
+            if (dataBase.highScore == 0) return;
+            
+            highScoreObject.transform.position = new Vector3(-5, 0, dataBase.highScore);
+            highScoreObject.SetActive(true);
         }
-        
-        public void OpenMergeScene()
-        {
-            FileHandler.SaveToJson(dataBase, "data");
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex - 1);
-        }
-        
+
         public void SaveSystem()
         {
             if (dataBase == null)

@@ -10,11 +10,10 @@ namespace Doors
         public Material positiveTextBGMat, negativeTextBGMat;
         public Material positiveDoorBGMat, negativeDoorBGMat;
         private BulletRangeSettings bulletRangeSettings;
-
-
-
-        void Start()
+        
+        private void Start()
         {
+            bulletRangeSettings = BulletRangeSettings.Instance;
             SetSpecialProperties();
             SetGeneralProperties();
             SetPositiveNegativeDoors(negativeTextBGMat, negativeDoorBGMat, positiveTextBGMat, positiveDoorBGMat);
@@ -33,7 +32,7 @@ namespace Doors
                 bullet.DeactivateBullet();
 
                 //SetRange
-                addRange += tempBulletController.hitValue;
+                addRange += bullet.hitValue;
                 valueText.text = addRange.ToString();
                 ValueTextAnim();
 

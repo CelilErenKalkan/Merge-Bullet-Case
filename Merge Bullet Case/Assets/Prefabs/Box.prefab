@@ -120,7 +120,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -4555460501780933984, guid: aa07643a1b6fe5b49829d6b23312b4a9, type: 2}
+  - {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -164,8 +164,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 9999
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: aa07643a1b6fe5b49829d6b23312b4a9, type: 2}
-  m_sharedMaterial: {fileID: -4555460501780933984, guid: aa07643a1b6fe5b49829d6b23312b4a9, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -246,7 +246,7 @@ GameObject:
   - component: {fileID: 8881403462856422096}
   - component: {fileID: 8881403462856422097}
   - component: {fileID: 8881403462856422110}
-  - component: {fileID: -2788407123508377093}
+  - component: {fileID: 4490132103723539241}
   m_Layer: 7
   m_Name: Box
   m_TagString: Box
@@ -333,7 +333,7 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
---- !u!114 &-2788407123508377093
+--- !u!114 &4490132103723539241
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -342,7 +342,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 8881403462856422111}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ec0972c4d88d96c4b9d84a7ae2f60308, type: 3}
+  m_Script: {fileID: 11500000, guid: acb6cb5ae6381964a8d15d6c267a9a90, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   hp: 0

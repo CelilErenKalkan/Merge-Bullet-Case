@@ -1,20 +1,14 @@
+using Editors;
 using UnityEngine;
 
 namespace Gameplay
 {
     public class StartBullets : MonoSingleton<StartBullets>
     {
-        #region Variables for Movement
         public bool isMoveForward;
-        public float forwardSpeed;
-        #endregion
+        private const float ForwardSpeed = 10;
 
-        void Start()
-        {
-        
-        }
-
-        void Update()
+        private void Update()
         {
             MoveForward();
         }
@@ -22,7 +16,7 @@ namespace Gameplay
         private void MoveForward()
         {
             if(isMoveForward)
-                transform.Translate(transform.forward * forwardSpeed * Time.deltaTime);
+                transform.Translate(transform.forward * ForwardSpeed * Time.deltaTime);
         }
     }
 }

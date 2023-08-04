@@ -42,5 +42,5 @@ MonoBehaviour:
   gridColumn: 5
   gridStartPoint: {x: -2, y: 3, z: 0}
   bulletPrice: 100
-  CreateingBulletType: 1
-  StartMoney: 1000
+  creatingBulletType: 1
+  startMoney: 1000

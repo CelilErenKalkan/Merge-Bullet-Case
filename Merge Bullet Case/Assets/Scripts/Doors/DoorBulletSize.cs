@@ -12,17 +12,13 @@ namespace Doors
         public Material positiveTextBGMat, negativeTextBGMat;
         public Material positiveDoorBGMat, negativeDoorBGMat;
 
-        void Start()
+        private void Start()
         {
             levelManager = LevelManager.Instance;
             SetSpecialProperties();
             SetGeneralProperties();
             SetPositiveNegativeDoors(negativeTextBGMat, negativeDoorBGMat, positiveTextBGMat, positiveDoorBGMat);
             addBulletSize = SetInitialValues(0, 150, (int)addBulletSize);
-        }
-
-        private void OnEnable()
-        {
         }
 
         private void SetSpecialProperties()
@@ -37,7 +33,7 @@ namespace Doors
                 bullet.DeactivateBullet();
 
                 //SetBulletSize
-                addBulletSize += tempBulletController.hitValue;
+                addBulletSize += bullet.hitValue;
                 valueText.text = addBulletSize.ToString();
                 ValueTextAnim();
 

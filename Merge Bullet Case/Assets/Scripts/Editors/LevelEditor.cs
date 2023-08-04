@@ -19,8 +19,7 @@ namespace Editors
 
         public int gridRow,gridColumn;
         public Vector3 gridStartPoint;
-        public int bulletPrice,CreateingBulletType;
-
-        public int StartMoney;
+        public int bulletPrice,creatingBulletType;
+        public int startMoney;
     }
 }

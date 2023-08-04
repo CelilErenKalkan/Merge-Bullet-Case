@@ -1,3 +1,4 @@
+using Editors;
 using UnityEngine;
 
 namespace Managers
@@ -7,13 +8,7 @@ namespace Managers
         private Vector3 targetDistance;
         public float followSpeed;
         public Transform target;
-        [SerializeField] private Transform firstTarget;
         public bool isFollow;
-
-        private void Start()
-        {
-            SetTarget(firstTarget);
-        }
 
         public void SetTarget(Transform tr)
         {
@@ -22,7 +17,7 @@ namespace Managers
             targetDistance = transform.position - target.transform.position;
             isFollow = true;
         }
-        void LateUpdate()
+        private void LateUpdate()
         {
             if (isFollow)
                 transform.position = Vector3.Lerp(transform.position, targetDistance + target.transform.position, followSpeed * Time.deltaTime); //CamFollowDelta = 5

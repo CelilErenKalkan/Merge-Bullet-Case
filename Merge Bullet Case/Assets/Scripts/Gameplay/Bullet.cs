@@ -9,27 +9,25 @@ namespace Gameplay
 {
     public class Bullet : MonoBehaviour
     {
-        private GameManager gameManager;
         private LevelManager levelManager;
-        private GridCreator gridCreator;
+        private GridManager gridManager;
         
-        [HideInInspector] public Grid currentGridController, targetGridController;
+        [HideInInspector] public Grid currentGrid, targetGrid;
         public int bulletType, hitValue, gridNum, hp;
         public Vector2 pos;
         public bool isGameBullet, isGunBullet;
 
-        private Bullet targetBulletController;
+        private Bullet targetBullet;
         Vector3 worldPosition;
         private bool isOnTouch, isForwardFire, isRightTripleFire, isLeftTripleFire;
         [HideInInspector] public bool isUnbeatable;
-        public float bulletSpeed;
+        private const float BulletSpeed = 15;
         private float previousXPos, previousZPos, nextXPos, nextZPos;
 
         private void Start()
         {
-            gameManager = GameManager.Instance;
             levelManager = LevelManager.Instance;
-            gridCreator = GridCreator.Instance;
+            gridManager = GridManager.Instance;
         }
 
         private void OnEnable()
@@ -40,7 +38,7 @@ namespace Gameplay
             }
         }
 
-        void Update()
+        private void Update()
         {
             MoveObject();
             Fire();
@@ -63,7 +61,7 @@ namespace Gameplay
             }
         }
 
-        private void MoveObject() //Drag control system
+        private void MoveObject() // Drag control
         {
             if (isOnTouch)
             {
@@ -81,33 +79,43 @@ namespace Gameplay
 
         public void GetGridController()
         {
-            currentGridController = transform.parent.GetComponent<Grid>();
+            if (transform.parent.TryGetComponent(out Grid grid))
+                currentGrid = grid;
+        }
+        
+        public void ResetGrid()
+        {
+            currentGrid.gridSit = GridSit.Empty;
+            gridManager.emptyGrids.Add(currentGrid.gameObject);
+            currentGrid.bulletType = 0;
         }
 
         private void PutDown()
         {
-            currentGridController = transform.parent.GetComponent<Grid>();
-            if (targetGridController.gridSit.Equals(GridSit.Empty)) //Empty Movement
+            GetGridController();
+            
+            if (targetGrid.gridSit.Equals(GridSit.Empty)) //Empty Movement
             {
                 //Grid Events
                 ResetGrid();
-                gridCreator.emptyGrids.Remove(targetGridController.gameObject);
-                targetGridController.gridSit = GridSit.Fill;
-                targetGridController.bulletType = bulletType;
+                gridManager.emptyGrids.Remove(targetGrid.gameObject);
+                targetGrid.gridSit = GridSit.Fill;
+                targetGrid.bulletType = bulletType;
 
                 //Bullet Events
-                transform.SetParent(targetGridController.transform);
+                transform.SetParent(targetGrid.transform);
                 transform.localPosition = Vector3.zero;
-                pos = targetGridController.pos;
+                pos = targetGrid.pos;
             }
             else
             {
-                if (bulletType.Equals(targetGridController.bulletType) &&
-                    targetGridController.gameObject != currentGridController.gameObject) //Merge
+                if (bulletType.Equals(targetGrid.bulletType) &&
+                    targetGrid.gameObject != currentGrid.gameObject) //Merge
                 {
-                    targetBulletController = targetGridController.transform.GetChild(1).GetComponent<Bullet>();
+                    if (targetGrid.transform.GetChild(1).TryGetComponent(out Bullet bullet))
+                        targetBullet = bullet;
                     if (bulletType < levelManager.levelEditor.bulletDatas.Length)
-                        BulletEditor.Merge(this, targetBulletController);
+                        BulletEditor.Merge(this, targetBullet);
                     else
                         transform.localPosition = Vector3.zero;
                 }
@@ -117,13 +125,6 @@ namespace Gameplay
 
             gridNum = transform.parent.GetSiblingIndex();
             levelManager.SaveSystem();
-        }
-
-        public void ResetGrid()
-        {
-            currentGridController.gridSit = GridSit.Empty;
-            gridCreator.emptyGrids.Add(currentGridController.gameObject);
-            currentGridController.bulletType = 0;
         }
 
         public void ForwardMovement(int hit)
@@ -150,19 +151,19 @@ namespace Gameplay
         private void Fire()
         {
             if (isForwardFire)
-                transform.position += (Vector3.forward * bulletSpeed * Time.deltaTime);
+                transform.position += (Vector3.forward * BulletSpeed * Time.deltaTime);
 
             else if (isRightTripleFire)
             {
-                transform.position += ((Vector3.forward + Vector3.right * 0.3f) * bulletSpeed * Time.deltaTime);
+                transform.position += ((Vector3.forward + Vector3.right * 0.3f) * BulletSpeed * Time.deltaTime);
             }
             else if (isLeftTripleFire)
             {
-                transform.position += ((Vector3.forward - Vector3.right * 0.3f) * bulletSpeed * Time.deltaTime);
+                transform.position += ((Vector3.forward - Vector3.right * 0.3f) * BulletSpeed * Time.deltaTime);
             }
         }
 
-        public void SetRot()
+        private void SetRot()
         {
             previousXPos = transform.position.x;
             previousZPos = transform.position.z;
@@ -179,14 +180,17 @@ namespace Gameplay
         {
             if (other.TryGetComponent(out Grid grid))
             {
-                targetGridController = grid;
+                targetGrid = grid;
             }
-            else if (other.TryGetComponent(out Character character))
+            else if (other.TryGetComponent(out Character character) && isGameBullet)
             {
+                isGameBullet = false;
                 character.hitValue += hitValue;
+                character.bulletType = bulletType;
                 character.isPlay = true;
-                levelManager.StartCharacterMovement();
+                levelManager.StartCharacterMovement(character);
                 DeactivateBullet();
+                Destroy(gameObject);
             }
             else if (!other.TryGetComponent(out Bullet bullet))
             {

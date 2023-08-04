@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Gameplay
 {
-    public class Character : MonoSingleton<Character>
+    public class Character : MonoBehaviour
     {
         private LevelManager levelManager;
         private GameManager gameManager;
@@ -14,7 +14,8 @@ namespace Gameplay
         
         private Bullet bulletRef;
         public Transform firePoint;
-        public int hitValue;
+        [HideInInspector] public int hitValue;
+        [HideInInspector] public int bulletType;
         public int collectedMoney;
 
         public bool isTripleShot;
@@ -31,6 +32,8 @@ namespace Gameplay
         
         private void Update()
         {
+            if (!gameManager.isPlayable || !isPlay) return;
+            
             HandleInput();
         
             if (isTouching)
@@ -39,34 +42,35 @@ namespace Gameplay
         
         private void CallBullet()
         { 
-            var bulletObject = Pool.Instance.SpawnObject(Vector3.zero, PoolItemType.Bullets, firePoint);
+            var bulletObject = Pool.Instance.SpawnObject(firePoint.position, PoolItemType.Bullets, null, bulletType - 1);
             if (bulletObject.TryGetComponent(out Bullet bullet)) bulletRef = bullet;
         }
         
         private IEnumerator WaitForFire()
         {
-            if (isTouching && isPlay)
+            while (gameObject.activeInHierarchy)
             {
-                CallBullet();
-                bulletRef.ForwardMovement(hitValue);
-
-                if (isTripleShot)
+                if (isTouching && isPlay)
                 {
-                    //Right Bullet
                     CallBullet();
-                    bulletRef.TripleRightMovement(hitValue);
+                    bulletRef.ForwardMovement(hitValue);
 
-                    //LeftBullet Bullet
-                    CallBullet();
-                    bulletRef.TripleLeftMovement(hitValue);
+                    if (isTripleShot)
+                    {
+                        //Right Bullet
+                        CallBullet();
+                        bulletRef.TripleRightMovement(hitValue);
 
+                        //LeftBullet Bullet
+                        CallBullet();
+                        bulletRef.TripleLeftMovement(hitValue);
+                    }
+
+                    yield return new WaitForSeconds(levelManager.fireRate);
                 }
-
-
-                yield return new WaitForSeconds(levelManager.fireRate);
+                
+                yield return new WaitForSeconds(0.05f);
             }
-            yield return new WaitForSeconds(0.05f);
-            StartCoroutine(WaitForFire());
         }
 
         private void HandleInput()
@@ -98,20 +102,21 @@ namespace Gameplay
 
         private void EndGameEvents()
         {
+            isTouching = isPlay = false;
+            
             // Actions.LevelEnd?.Invoke(); // If Actions.LevelEnd is not set up, this line should be removed.
             // Implement actions to perform when the game ends.
         }
 
         private void OnTriggerEnter(Collider other)
         {
-            if (!other.TryGetComponent(out Obstacle obstacle)) return;
-
-            if (obstacle.obstacleType == ObstacleType.Coin)
+            if (other.TryGetComponent(out Coin coin))
             {
                 // Get money and update the collectedMoney variable.
                 // Optionally, trigger audio/visual effects for collecting coins.
+                collectedMoney += levelManager.goldValue;
             }
-            else
+            else if (other.TryGetComponent(out Box box))
             {
                 EndGameEvents();
             }

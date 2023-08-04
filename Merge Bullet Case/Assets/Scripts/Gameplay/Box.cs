@@ -13,10 +13,10 @@ namespace Gameplay
         public Rigidbody golds;
         private Collider _collider;
         private MeshRenderer _meshRenderer;
-
+        
         private void Start()
         {
-            if (TryGetComponent(out Collider collider)) _collider = collider;
+            if (TryGetComponent(out Collider coll)) _collider = coll;
             if (TryGetComponent(out MeshRenderer meshRenderer)) _meshRenderer = meshRenderer;
             startScale = transform.localScale;
             SetHp(0);
@@ -26,10 +26,10 @@ namespace Gameplay
         {
             hp -= hitValue;
             hpText.text = hp.ToString();
-            hitAnim();
+            HitAnim();
         }
 
-        private void hitAnim()
+        private void HitAnim()
         {
             DOTween.Complete(this);
             transform.DOScale(startScale * 1.2f, 0.05f).OnStepComplete(() => transform.DOScale(startScale, 0.05f));
@@ -37,13 +37,12 @@ namespace Gameplay
 
         private void CheckDeath()
         {
-            if (hp <= 0)
-            {
-                _collider.enabled = false;
-                _meshRenderer.enabled = false;
-                golds.isKinematic = false;
-                hpText.gameObject.SetActive(false);
-            }
+            if (hp > 0) return;
+            
+            _collider.enabled = false;
+            _meshRenderer.enabled = false;
+            golds.isKinematic = false;
+            hpText.gameObject.SetActive(false);
         }
 
         private void OnTriggerEnter(Collider other)
@@ -53,7 +52,7 @@ namespace Gameplay
             currentBullet = bullet;
             currentBullet.DeactivateBullet();
             SetHp(currentBullet.hitValue);
-            hitAnim();
+            HitAnim();
             CheckDeath();
         }
     }

@@ -14,7 +14,7 @@ public class DoorFireRate : DoorController
     public Material positiveTextBGMat, negativeTextBGMat;
     public Material positiveDoorBGMat, negativeDoorBGMat;
 
-    void Start()
+    private void Start()
     {
         levelManager = LevelManager.Instance;
         SetSpecialProperties();
@@ -35,7 +35,7 @@ public class DoorFireRate : DoorController
             bullet.DeactivateBullet();
            
             //SetFireRate
-            addFireRate += tempBulletController.hitValue;
+            addFireRate += bullet.hitValue;
             valueText.text = addFireRate.ToString();
             ValueTextAnim();
 
