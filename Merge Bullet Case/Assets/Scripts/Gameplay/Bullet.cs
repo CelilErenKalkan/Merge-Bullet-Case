@@ -194,7 +194,7 @@ namespace Gameplay
                 Destroy(gameObject);
             }
             else if (!other.TryGetComponent(out Bullet bullet) 
-                     || !other.TryGetComponent(out Coin coin))
+                     && !other.TryGetComponent(out Coin coin))
             {
                 Pool.Instance.SpawnObject(transform.position, PoolItemType.WallParticle, null, 1.0f);
                 DeactivateBullet();
