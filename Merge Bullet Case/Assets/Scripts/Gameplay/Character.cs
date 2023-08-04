@@ -8,6 +8,7 @@ namespace Gameplay
     {
         private LevelManager levelManager;
         private GameManager gameManager;
+        private float xDifference;
         [SerializeField] private float forwardSpeed = 10f;
         [SerializeField] private float sideSpeed = 18f;
         
@@ -16,12 +17,12 @@ namespace Gameplay
         public Transform firePoint;
         [HideInInspector] public int hitValue;
         [HideInInspector] public int bulletType;
-        public int collectedMoney;
 
         public bool isTripleShot;
         public bool isPlay;
         private bool isTouching = false;
-        private Vector3 firstTouch;
+        private bool isFirstTouch;
+        private Vector3 currentTouch, firstTouch;
 
         private void Start()
         {
@@ -34,9 +35,10 @@ namespace Gameplay
         {
             if (!gameManager.isPlayable || !isPlay) return;
             
-            HandleInput();
-        
-            if (isTouching)
+            if (Input.GetMouseButtonDown(0))
+                isFirstTouch = true;
+
+            if (isFirstTouch)
                 MovementController();
         }
         
@@ -66,46 +68,51 @@ namespace Gameplay
                         bulletRef.TripleLeftMovement(hitValue);
                     }
 
-                    yield return new WaitForSeconds(levelManager.fireRate);
+                    yield return new WaitForSeconds(levelManager.fireRate * 0.5f);
                 }
                 
                 yield return new WaitForSeconds(0.05f);
             }
         }
 
-        private void HandleInput()
+        private void MovementController()
         {
-            if (Input.GetMouseButtonDown(0))
+            //Forward Movement
+            if (isTouching)
+                transform.Translate(transform.forward * forwardSpeed * Time.deltaTime);  //15
+
+            //Side Movement
+            if (isTouching)
+            {
+                currentTouch = Input.mousePosition;
+                xDifference = (currentTouch.x - firstTouch.x) * 100f / Screen.width;
+                xDifference = Mathf.Clamp(xDifference, -1, 1); //Clamp Side acceleration
+                Vector3 newPos = transform.position + new Vector3(xDifference, 0, 0);
+                transform.position = Vector3.Lerp(transform.position, new Vector3(newPos.x, transform.position.y, transform.position.z), sideSpeed * Time.deltaTime);// MoveSpeed = 11
+                //Border Control
+                if (transform.position.x <= -4)
+                    transform.position = new Vector3(-4, transform.position.y, transform.position.z);
+                if (transform.position.x > 4)
+                    transform.position = new Vector3(4, transform.position.y, transform.position.z);
+            }
+            if (Input.GetMouseButton(0))
             {
                 isTouching = true;
                 firstTouch = Input.mousePosition;
             }
-            else if (Input.GetMouseButtonUp(0))
+
+
+            if (Input.GetMouseButtonUp(0))
             {
                 isTouching = false;
             }
         }
 
-        private void MovementController()
-        {
-            float horizontalInput = (Input.mousePosition.x - firstTouch.x) * 100f / Screen.width;
-            horizontalInput = Mathf.Clamp(horizontalInput, -1f, 1f); //Clamp Side acceleration
-
-            Vector3 movement = transform.forward * forwardSpeed * Time.fixedDeltaTime;
-            movement += new Vector3(horizontalInput * sideSpeed * Time.fixedDeltaTime, 0f, 0f);
-
-            Vector3 newPos = transform.position + movement;
-            newPos.x = Mathf.Clamp(newPos.x, -4f, 4f); //Clamping for Side Movement
-
-            transform.position = newPos;
-        }
-
         private void EndGameEvents()
         {
             isTouching = isPlay = false;
-            
-            // Actions.LevelEnd?.Invoke(); // If Actions.LevelEnd is not set up, this line should be removed.
-            // Implement actions to perform when the game ends.
+            levelManager.dataBase.highScore = transform.position.z;
+            Actions.LevelEnd?.Invoke();
         }
 
         private void OnTriggerEnter(Collider other)
@@ -114,7 +121,8 @@ namespace Gameplay
             {
                 // Get money and update the collectedMoney variable.
                 // Optionally, trigger audio/visual effects for collecting coins.
-                collectedMoney += levelManager.goldValue;
+                Debug.Log("Coin");
+                levelManager.collectedMoney += levelManager.goldValue;
             }
             else if (other.TryGetComponent(out Box box))
             {

@@ -21,7 +21,7 @@ namespace Gameplay
         Vector3 worldPosition;
         private bool isOnTouch, isForwardFire, isRightTripleFire, isLeftTripleFire;
         [HideInInspector] public bool isUnbeatable;
-        private const float BulletSpeed = 15;
+        private const float BulletSpeed = 20;
         private float previousXPos, previousZPos, nextXPos, nextZPos;
 
         private void Start()

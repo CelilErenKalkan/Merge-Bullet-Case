@@ -48,11 +48,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba6c8cf473fc08c40b8689eb38c14bbd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  forwardSpeed: 1
-  sideSpeed: 0.5
+  forwardSpeed: 10
+  sideSpeed: 15
   firePoint: {fileID: 1198869680106597210}
   hitValue: 0
-  collectedMoney: 0
+  bulletType: 0
   isTripleShot: 0
   isPlay: 0
 --- !u!136 &1198869679346420467

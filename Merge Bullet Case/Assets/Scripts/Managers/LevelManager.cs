@@ -16,6 +16,7 @@ namespace Managers
         private Pool pool;
         private StartBullets startBullets;
         
+        [HideInInspector] public int collectedMoney;
         [HideInInspector] public Vector3 playerStartPos;
 
         [Header("Character Variables")]
@@ -68,6 +69,7 @@ namespace Managers
 
         private void Start()
         {
+            dataBase = FileHandler.ReadFromJson<DataBase>("data");
             BulletEditor.SetBulletEditor();
             gameManager = GameManager.Instance;
             pool = Pool.Instance;
@@ -111,7 +113,8 @@ namespace Managers
 
         private void StartLevel()
         {
-            FileHandler.SaveToJson(dataBase, "data");  
+            FileHandler.SaveToJson(dataBase, "data");
+            
             if (gameManager.bullets.Count > 0)
             {
                 DOTween.KillAll();

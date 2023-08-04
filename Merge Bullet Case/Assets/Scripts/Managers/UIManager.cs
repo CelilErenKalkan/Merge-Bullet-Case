@@ -2,6 +2,7 @@ using DG.Tweening;
 using Editors;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Managers
 {
@@ -10,26 +11,45 @@ namespace Managers
         private LevelManager levelManager;
         
         public GameObject winPanel;
-        public TMP_Text moneyText;
+        public TMP_Text moneyText, gainedMoneyText;
         [SerializeField] private GameObject startButton, bulletButton;
 
         // Start is called before the first frame update
         private void Start()
         {
             levelManager = LevelManager.Instance;
+            SetMoneyText(levelManager.collectedMoney);
+        }
+        
+        
+        private void OnEnable()
+        {
+            Actions.LevelEnd += OpenWinPanel;
+        }
+        
+        private void OnDisable()
+        {
+            Actions.LevelEnd -= OpenWinPanel;
         }
 
         public void StartGame()
         {
             startButton.SetActive(false);
             bulletButton.SetActive(false);
+            SetMoneyText(levelManager.dataBase.money);
             Actions.LevelStart?.Invoke();
         }
-
-        public void OpenWinPanel(int money)
+        
+        public void RestartGame()
         {
-            levelManager.dataBase.money += money;
-            moneyText.text = "$" + money;
+            SceneManager.LoadScene(0);
+        }
+
+        private void OpenWinPanel()
+        {
+            levelManager.dataBase.money += levelManager.collectedMoney;
+            gainedMoneyText.text = "$" + levelManager.collectedMoney;
+            levelManager.SaveSystem();
             winPanel.SetActive(true);
             winPanel.transform.DOScale(Vector3.one, 0.3f);
         }
@@ -42,7 +62,7 @@ namespace Managers
 
         private void SetMoneyText(int money)
         {
-            moneyText.text = money.ToString();
+            moneyText.text = "$" + money;
         }
     }
 }

@@ -80,12 +80,12 @@ namespace Wall
 
                     tempWall = pool.SpawnObject(startPos + new Vector3(j * 2, 0, i * 1.5f), PoolItemType.Walls, wallsParent, childIndex);
 
-                    //SetCharacters
+                    //Set Characters
                     if (i == row - 1)
                     {
                         var tempChar = pool.SpawnObject(tempWall.transform.position + Vector3.forward * 10,
                             PoolItemType.Character, charactersParent);
-                        levelManager.characterList.Add(tempChar.GetComponent<Character>());
+                        if (tempChar.TryGetComponent(out Character ch)) levelManager.characterList.Add(ch);
                         character.transform.position = new Vector3(0, 0, tempWall.transform.position.z + 20);
                     }
 

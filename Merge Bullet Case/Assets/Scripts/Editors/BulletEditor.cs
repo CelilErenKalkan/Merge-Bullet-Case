@@ -78,12 +78,12 @@ namespace Editors
                     unbeatableBullet = bullet.bulletType >= unbeatableBullet.bulletType ? bullet : unbeatableBullet;
 
                 //Set Bullet Transform
-                tempBullet.transform.localScale = tempBullet.transform.localScale * 2;
+                tempBullet.transform.localScale *= 2;
                 tempBullet.transform.position = new Vector3(-4, 1, 0) + new Vector3(bullet.pos.x * 2, 0, bullet.pos.y * 2);
-                tempBullet.transform.rotation = Quaternion.Euler(90, 0, 0);
 
                 //Start Move
-                startBulletsParent.GetComponent<StartBullets>().isMoveForward = true;
+                if (startBulletsParent.TryGetComponent(out StartBullets startBullets))
+                    startBullets.isMoveForward = true;
             }
             
             unbeatableBullet.isUnbeatable = true;
