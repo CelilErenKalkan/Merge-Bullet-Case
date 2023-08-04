@@ -180,6 +180,7 @@ namespace Gameplay
         {
             if (other.TryGetComponent(out Grid grid))
             {
+                Pool.Instance.SpawnObject(transform.position, PoolItemType.BulletParticle, null, 1.0f);
                 targetGrid = grid;
             }
             else if (other.TryGetComponent(out Character character) && isGameBullet)
@@ -192,8 +193,10 @@ namespace Gameplay
                 DeactivateBullet();
                 Destroy(gameObject);
             }
-            else if (!other.TryGetComponent(out Bullet bullet))
+            else if (!other.TryGetComponent(out Bullet bullet) 
+                     || !other.TryGetComponent(out Coin coin))
             {
+                Pool.Instance.SpawnObject(transform.position, PoolItemType.WallParticle, null, 1.0f);
                 DeactivateBullet();
             }
         }

@@ -121,7 +121,7 @@ namespace Gameplay
             {
                 // Get money and update the collectedMoney variable.
                 // Optionally, trigger audio/visual effects for collecting coins.
-                Debug.Log("Coin");
+                Pool.Instance.SpawnObject(transform.position, PoolItemType.MoneyParticle, null, 1.0f);
                 levelManager.collectedMoney += levelManager.goldValue;
             }
             else if (other.TryGetComponent(out Box box))

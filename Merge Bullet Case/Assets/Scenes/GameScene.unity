@@ -207,6 +207,27 @@ MonoBehaviour:
     expandable: 1
     poolItemType: 5
     parent: {fileID: 0}
+  - poolName: BulletParticle
+    prefabs:
+    - {fileID: 6861683798100369132, guid: 3dfae3e871d520442960106b673263ce, type: 3}
+    amount: 0
+    expandable: 1
+    poolItemType: 6
+    parent: {fileID: 0}
+  - poolName: MoneyParticle
+    prefabs:
+    - {fileID: 2464910222389567768, guid: de8cb76cc6a221e4b840c75efb9c6374, type: 3}
+    amount: 0
+    expandable: 1
+    poolItemType: 7
+    parent: {fileID: 0}
+  - poolName: WallParticle
+    prefabs:
+    - {fileID: 7569072447530327525, guid: 566e7d1e6698819498fae702485a6b81, type: 3}
+    amount: 0
+    expandable: 1
+    poolItemType: 8
+    parent: {fileID: 0}
   poolObjects: []
 --- !u!4 &28275012
 Transform:
@@ -240,7 +261,10 @@ MonoBehaviour:
   finishLine: {fileID: 1926362747}
   platform: {fileID: 138383162}
   levelEditor: {fileID: 11400000, guid: 4dabe82a70135984fa71c8b6afe8542d, type: 2}
-  dataBase: {fileID: 11400000, guid: 237d8cb8376d3e94ab3ed2430cd8e213, type: 2}
+  dataBase:
+    bulletSaves: []
+    money: 0
+    highScore: 0
   bulletSize: 1
   fireRate: 0.5
   doorNum: 5

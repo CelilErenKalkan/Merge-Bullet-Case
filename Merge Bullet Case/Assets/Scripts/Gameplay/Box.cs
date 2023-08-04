@@ -1,4 +1,5 @@
 using DG.Tweening;
+using Managers;
 using UnityEngine;
 
 namespace Gameplay
@@ -49,6 +50,7 @@ namespace Gameplay
         {
             if (!other.TryGetComponent(out Bullet bullet)) return;
 
+            Pool.Instance.SpawnObject(transform.position, PoolItemType.WallParticle, null, 1.0f);
             currentBullet = bullet;
             currentBullet.DeactivateBullet();
             SetHp(currentBullet.hitValue);

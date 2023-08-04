@@ -69,7 +69,8 @@ namespace Managers
 
         private void Start()
         {
-            dataBase = FileHandler.ReadFromJson<DataBase>("data");
+            var db = FileHandler.ReadFromJson<DataBase>("data");
+            dataBase = db;
             BulletEditor.SetBulletEditor();
             gameManager = GameManager.Instance;
             pool = Pool.Instance;

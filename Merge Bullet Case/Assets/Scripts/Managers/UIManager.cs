@@ -18,7 +18,7 @@ namespace Managers
         private void Start()
         {
             levelManager = LevelManager.Instance;
-            SetMoneyText(levelManager.collectedMoney);
+            SetMoneyText(levelManager.dataBase.money);
         }
         
         
@@ -57,7 +57,7 @@ namespace Managers
         public void AddBullet()
         {
             BulletEditor.AddBullet();
-            SetMoneyText(-levelManager.levelEditor.bulletPrice);
+            SetMoneyText(levelManager.dataBase.money);
         }
 
         private void SetMoneyText(int money)

@@ -3,8 +3,8 @@ using UnityEngine;
 
 namespace Editors
 {
-    [CreateAssetMenu(fileName = "DataBase")]
-    public class DataBase : ScriptableObject
+    [System.Serializable]
+    public class DataBase
     {
         [System.Serializable]
         public struct BulletSave

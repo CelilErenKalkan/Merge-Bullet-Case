@@ -8,38 +8,38 @@ namespace Editors
 {
     public static class BulletEditor
     {
-        private static LevelManager _levelManager;
-        private static GameManager _gameManager;
-        private static GridManager _gridManager;
-        private static CameraManager _cameraManager;
-        private static Pool _pool;
+        private static LevelManager levelManager;
+        private static GameManager gameManager;
+        private static GridManager gridManager;
+        private static CameraManager cameraManager;
+        private static Pool pool;
 
         private static Bullet unbeatableBullet;
 
         public static void SetBulletEditor()
         {
-            _levelManager = LevelManager.Instance;
-            _gameManager = GameManager.Instance;
-            _gridManager = GridManager.Instance;
-            _cameraManager = CameraManager.Instance;
-            _pool = Pool.Instance;
+            levelManager = LevelManager.Instance;
+            gameManager = GameManager.Instance;
+            gridManager = GridManager.Instance;
+            cameraManager = CameraManager.Instance;
+            pool = Pool.Instance;
         }
         
         public static void CreateBullets()
         {
-            foreach (var bulletSave in _levelManager.dataBase.bulletSaves)
+            foreach (var bulletSave in levelManager.dataBase.bulletSaves)
             {
-                GameObject currentBulletObject = _pool.SpawnObject(_gridManager.grids[bulletSave.GridNum].transform.position, PoolItemType.Bullets,_gridManager.grids[bulletSave.GridNum].transform, bulletSave.type - 1);
+                GameObject currentBulletObject = pool.SpawnObject(gridManager.grids[bulletSave.GridNum].transform.position, PoolItemType.Bullets,gridManager.grids[bulletSave.GridNum].transform, bulletSave.type - 1);
                 Bullet currentBulletScript = currentBulletObject.GetComponent<Bullet>();
         
                 // Set bullet properties
-                _gameManager.bullets.Add(currentBulletScript);
-                currentBulletScript.bulletType = _levelManager.levelEditor.bulletDatas[bulletSave.type - 1].type;
-                currentBulletScript.hitValue = _levelManager.levelEditor.bulletDatas[bulletSave.type - 1].hitValue;
-                currentBulletScript.hp = _levelManager.levelEditor.bulletDatas[bulletSave.type - 1].hp;
+                gameManager.bullets.Add(currentBulletScript);
+                currentBulletScript.bulletType = levelManager.levelEditor.bulletDatas[bulletSave.type - 1].type;
+                currentBulletScript.hitValue = levelManager.levelEditor.bulletDatas[bulletSave.type - 1].hitValue;
+                currentBulletScript.hp = levelManager.levelEditor.bulletDatas[bulletSave.type - 1].hp;
         
                 // Get and set grid controller
-                var currentGridController = _gridManager.grids[bulletSave.GridNum].GetComponent<Grid>();
+                var currentGridController = gridManager.grids[bulletSave.GridNum].GetComponent<Grid>();
                 currentBulletScript.GetGridController();
                 currentBulletScript.gridNum = bulletSave.GridNum;
                 currentBulletScript.pos = currentBulletScript.currentGrid.pos;
@@ -47,7 +47,7 @@ namespace Editors
                 // Set Grid Settings
                 currentGridController.bulletType = currentBulletScript.bulletType;
                 currentGridController.gridSit = GridSit.Fill;
-                _gridManager.emptyGrids.Remove(currentGridController.gameObject);
+                gridManager.emptyGrids.Remove(currentGridController.gameObject);
         
                 // Parent bullet to the grid
                 currentBulletObject.transform.SetParent(currentGridController.transform);
@@ -57,18 +57,18 @@ namespace Editors
         
         public static int CreateInitialBullets(Transform startBulletsParent)
         {
-            for (var i = 0; i < _levelManager.dataBase.bulletSaves.Count; i++)
+            for (var i = 0; i < levelManager.dataBase.bulletSaves.Count; i++)
             {
                 //Create Bullet
-                var tempBullet = _pool.SpawnObject(_levelManager.dataBase.bulletSaves[i].pos, PoolItemType.Bullets,
-                    startBulletsParent, _levelManager.dataBase.bulletSaves[i].type - 1);
+                var tempBullet = pool.SpawnObject(levelManager.dataBase.bulletSaves[i].pos, PoolItemType.Bullets,
+                    startBulletsParent, levelManager.dataBase.bulletSaves[i].type - 1);
                 if (tempBullet.TryGetComponent(out Bullet bullet))
 
                 //Set Bullet Properties
-                bullet.bulletType = _levelManager.dataBase.bulletSaves[i].type;
-                bullet.hp = _levelManager.dataBase.bulletSaves[i].hp;
-                bullet.pos = _levelManager.dataBase.bulletSaves[i].pos;
-                bullet.hitValue = _levelManager.dataBase.bulletSaves[i].hitValue;
+                bullet.bulletType = levelManager.dataBase.bulletSaves[i].type;
+                bullet.hp = levelManager.dataBase.bulletSaves[i].hp;
+                bullet.pos = levelManager.dataBase.bulletSaves[i].pos;
+                bullet.hitValue = levelManager.dataBase.bulletSaves[i].hitValue;
                 bullet.isGameBullet = true;
 
                 //Select Unbeatable bullet
@@ -87,7 +87,7 @@ namespace Editors
             }
             
             unbeatableBullet.isUnbeatable = true;
-            _cameraManager.SetTarget(unbeatableBullet.transform);
+            cameraManager.SetTarget(unbeatableBullet.transform);
             
             //Set Wall Length
             return unbeatableBullet.hp + 2;
@@ -95,37 +95,38 @@ namespace Editors
         
         public static void AddBullet()
         {
-            if (_gridManager.emptyGrids.Count > 0 &&
-                _levelManager.dataBase.money >= _levelManager.levelEditor.bulletPrice)
+            if (gridManager.emptyGrids.Count > 0 &&
+                levelManager.dataBase.money >= levelManager.levelEditor.bulletPrice)
             {
-                int rndGrid = Random.Range(0, _gridManager.emptyGrids.Count);
+                levelManager.dataBase.money -= levelManager.levelEditor.bulletPrice;
+                int rndGrid = Random.Range(0, gridManager.emptyGrids.Count);
                 
-                var tempBullet = _pool.SpawnObject(Vector3.zero, PoolItemType.Bullets, null,
-                    _levelManager.levelEditor.creatingBulletType - 1);
+                var tempBullet = pool.SpawnObject(Vector3.zero, PoolItemType.Bullets, null,
+                    levelManager.levelEditor.creatingBulletType - 1);
                 var bullet = tempBullet.GetComponent<Bullet>();
-                var tempGrid = _gridManager.emptyGrids[rndGrid];
+                var tempGrid = gridManager.emptyGrids[rndGrid];
                 var grid = tempGrid.GetComponent<Grid>();
 
                 //Set grid properties
-                grid.bulletType = _levelManager.levelEditor.bulletDatas[_levelManager.levelEditor.creatingBulletType - 1]
+                grid.bulletType = levelManager.levelEditor.bulletDatas[levelManager.levelEditor.creatingBulletType - 1]
                     .type;
-                _gridManager.emptyGrids.Remove(tempGrid);
+                gridManager.emptyGrids.Remove(tempGrid);
                 grid.gridSit = GridSit.Fill;
 
                 //Set bullet properties
                 tempBullet.transform.SetParent(tempGrid.transform);
                 tempBullet.transform.localPosition = Vector3.zero;
-                bullet.gridNum = _gridManager.grids.IndexOf(tempGrid);
-                bullet.bulletType = _levelManager.levelEditor.creatingBulletType;
-                bullet.hitValue = _levelManager.levelEditor.bulletDatas[_levelManager.levelEditor.creatingBulletType - 1]
+                bullet.gridNum = gridManager.grids.IndexOf(tempGrid);
+                bullet.bulletType = levelManager.levelEditor.creatingBulletType;
+                bullet.hitValue = levelManager.levelEditor.bulletDatas[levelManager.levelEditor.creatingBulletType - 1]
                     .hitValue;
-                bullet.hp = _levelManager.levelEditor.bulletDatas[_levelManager.levelEditor.creatingBulletType - 1].hp;
+                bullet.hp = levelManager.levelEditor.bulletDatas[levelManager.levelEditor.creatingBulletType - 1].hp;
                 bullet.pos = grid.pos;
                 bullet.GetGridController();
 
-                _gameManager.bullets.Add(bullet);
+                gameManager.bullets.Add(bullet);
                 
-                _levelManager.SaveSystem();
+                levelManager.SaveSystem();
             }
         }
         
@@ -148,19 +149,19 @@ namespace Editors
             Bullet mergedBullet = bullet;
             
             // Set properties of the merged bullet
-            mergedBullet.bulletType = _levelManager.levelEditor.bulletDatas[firstBullet.bulletType].type;
-            mergedBullet.hitValue = _levelManager.levelEditor.bulletDatas[firstBullet.bulletType].hitValue;
-            mergedBullet.hp = _levelManager.levelEditor.bulletDatas[firstBullet.bulletType].hp;
+            mergedBullet.bulletType = levelManager.levelEditor.bulletDatas[firstBullet.bulletType].type;
+            mergedBullet.hitValue = levelManager.levelEditor.bulletDatas[firstBullet.bulletType].hitValue;
+            mergedBullet.hp = levelManager.levelEditor.bulletDatas[firstBullet.bulletType].hp;
             mergedBullet.GetGridController();
-            _gameManager.bullets.Add(mergedBullet);
+            gameManager.bullets.Add(mergedBullet);
             
             // Remove the merged bullets from the bullets list
-            _gameManager.bullets.Remove(firstBullet);
-            _gameManager.bullets.Remove(secondBullet);
+            gameManager.bullets.Remove(firstBullet);
+            gameManager.bullets.Remove(secondBullet);
 
             // Deactivate the merged bullets
-            _pool.DeactivateObject(firstBullet.gameObject, PoolItemType.Bullets);
-            _pool.DeactivateObject(secondBullet.gameObject, PoolItemType.Bullets);
+            pool.DeactivateObject(firstBullet.gameObject, PoolItemType.Bullets);
+            pool.DeactivateObject(secondBullet.gameObject, PoolItemType.Bullets);
         }
     }
 }

@@ -6,4 +6,7 @@ public enum PoolItemType
 	Character = 3,
 	Boxes = 4,
 	Doors = 5,
+	BulletParticle = 6,
+	MoneyParticle = 7,
+	WallParticle = 8,
 }
