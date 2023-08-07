@@ -1,4 +1,5 @@
 using System.Collections;
+using DG.Tweening;
 using Doors;
 using Editors;
 using Managers;
@@ -193,6 +194,19 @@ namespace Gameplay
                 DeactivateBullet();
                 Destroy(gameObject);
             }
+            else if (other.TryGetComponent(out Box box))
+            {
+                Pool.Instance.SpawnObject(transform.position, PoolItemType.WallParticle, null, 1.0f);
+                box.GotHit(hitValue);
+                DeactivateBullet();
+            }
+            else if (other.TryGetComponent(out Wall wall))
+            {
+                TakeDamage(wall.damage);
+                Pool.Instance.SpawnObject(transform.position, PoolItemType.WallParticle, null, 1.0f);
+                wall.transform.DOScale(transform.localScale * 1.3f, 0.015f).SetEase(Ease.Linear).OnStepComplete(() => transform.DOScale(Vector3.zero, 0.15f));
+                if (wall.TryGetComponent(out Collider wCollider)) wCollider.enabled = false;
+            }
             else if (other.TryGetComponent(out DoorBulletSize doorBulletSize) 
                      && other.TryGetComponent(out DoorFireRate doorFireRate))
             {
@@ -200,7 +214,7 @@ namespace Gameplay
             }
         }
 
-        public void TakeDamage(int damage)
+        private void TakeDamage(int damage)
         {
             hp -= damage;
             if (hp <= 0)
@@ -218,7 +232,7 @@ namespace Gameplay
             Pool.Instance.DeactivateObject(gameObject, PoolItemType.Bullets);
         }
 
-        IEnumerator WaitStopBullet()
+        private IEnumerator WaitStopBullet()
         {
             yield return new WaitForSeconds(3);
             DeactivateBullet();

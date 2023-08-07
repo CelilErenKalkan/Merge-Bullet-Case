@@ -1,5 +1,4 @@
 using DG.Tweening;
-using Managers;
 using UnityEngine;
 
 namespace Gameplay
@@ -8,17 +7,16 @@ namespace Gameplay
     {
         public int hp;
         public TMPro.TextMeshPro hpText;
-
-        private Bullet currentBullet;
+        
         private Vector3 startScale;
         public Rigidbody golds;
-        private Collider _collider;
-        private MeshRenderer _meshRenderer;
+        private Collider bCollider;
+        private MeshRenderer meshRenderer;
         
         private void Start()
         {
-            if (TryGetComponent(out Collider coll)) _collider = coll;
-            if (TryGetComponent(out MeshRenderer meshRenderer)) _meshRenderer = meshRenderer;
+            if (TryGetComponent(out Collider coll)) bCollider = coll;
+            if (TryGetComponent(out MeshRenderer mRenderer)) meshRenderer = mRenderer;
             startScale = transform.localScale;
             SetHp(0);
         }
@@ -40,20 +38,15 @@ namespace Gameplay
         {
             if (hp > 0) return;
             
-            _collider.enabled = false;
-            _meshRenderer.enabled = false;
+            bCollider.enabled = false;
+            meshRenderer.enabled = false;
             golds.isKinematic = false;
             hpText.gameObject.SetActive(false);
         }
 
-        private void OnTriggerEnter(Collider other)
+        public void GotHit(int hitValue)
         {
-            if (!other.TryGetComponent(out Bullet bullet)) return;
-
-            Pool.Instance.SpawnObject(transform.position, PoolItemType.WallParticle, null, 1.0f);
-            currentBullet = bullet;
-            currentBullet.DeactivateBullet();
-            SetHp(currentBullet.hitValue);
+            SetHp(hitValue);
             HitAnim();
             CheckDeath();
         }
