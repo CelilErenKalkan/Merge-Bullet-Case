@@ -1,29 +1,28 @@
-using System.Collections;
-using System.Collections.Generic;
-using Doors;
 using Gameplay;
 using UnityEngine;
 
-public class DoorTripleShot : DoorController
+namespace Doors
 {
-    void Start()
+    public class DoorTripleShot : DoorController
     {
-        SetSpecialProperties();
-        SetGeneralProperties();
-    }
-
-    private void SetSpecialProperties()
-    {
-        doorType = DoorType.TripleShot;
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.TryGetComponent(out Character character))
+        private void Start()
         {
+            SetSpecialProperties();
+            SetGeneralProperties();
+        }
+
+        private void SetSpecialProperties()
+        {
+            doorType = DoorType.TripleShot;
+        }
+
+        private void OnTriggerEnter(Collider other)
+        {
+            if (!other.TryGetComponent(out Character character)) return;
+        
             CloseDoor();
-         
-            character.isTripleShot = true;
+
+            levelManager.isTripleShot = true;
         }
     }
 }

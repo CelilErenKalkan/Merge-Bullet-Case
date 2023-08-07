@@ -18,8 +18,7 @@ namespace Gameplay
         public Transform firePoint;
         [HideInInspector] public int hitValue;
         [HideInInspector] public int bulletType;
-
-        public bool isTripleShot;
+        
         public bool isPlay;
         private bool isTouching = false;
         private bool isFirstTouch;
@@ -58,7 +57,7 @@ namespace Gameplay
                     CallBullet();
                     bulletRef.ForwardMovement(hitValue);
 
-                    if (isTripleShot)
+                    if (levelManager.isTripleShot)
                     {
                         //Right Bullet
                         CallBullet();
@@ -118,10 +117,8 @@ namespace Gameplay
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.TryGetComponent(out Coin coin))
+            if (other.TryGetComponent(out Money coin))
             {
-                // Get money and update the collectedMoney variable.
-                // Optionally, trigger audio/visual effects for collecting coins.
                 Pool.Instance.SpawnObject(transform.position, PoolItemType.MoneyParticle, null, 1.0f);
                 levelManager.collectedMoney += levelManager.goldValue;
             }

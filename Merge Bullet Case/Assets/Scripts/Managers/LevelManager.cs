@@ -21,7 +21,7 @@ namespace Managers
 
         [Header("Character Variables")]
         private Character character;
-        private bool isStartCharacterMovement;
+        public bool isStartCharacterMovement, isTripleShot;
         public List<Character> characterList = new List<Character>();
 
         [Header("Serialization")]

@@ -1,20 +1,16 @@
 using Gameplay;
-using Managers;
 using UnityEngine;
 
 namespace Doors
 {
     public class DoorBulletSize : DoorController
     {
-        public LevelManager levelManager;
-
         public float addBulletSize, minBulletSize, maxBulletSize;
         public Material positiveTextBGMat, negativeTextBGMat;
         public Material positiveDoorBGMat, negativeDoorBGMat;
 
         private void Start()
         {
-            levelManager = LevelManager.Instance;
             SetSpecialProperties();
             SetGeneralProperties();
             SetPositiveNegativeDoors(negativeTextBGMat, negativeDoorBGMat, positiveTextBGMat, positiveDoorBGMat);

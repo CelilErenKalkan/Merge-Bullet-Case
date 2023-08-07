@@ -4,7 +4,6 @@ using Doors;
 using Editors;
 using Managers;
 using UnityEngine;
-using Utils;
 using Grid = Utils.Grid;
 
 namespace Gameplay
@@ -184,7 +183,8 @@ namespace Gameplay
             {
                 targetGrid = grid;
             }
-            else if (other.TryGetComponent(out Character character) && isGameBullet)
+            
+            if (other.TryGetComponent(out Character character) && isGameBullet)
             {
                 isGameBullet = false;
                 character.hitValue += hitValue;
@@ -194,20 +194,23 @@ namespace Gameplay
                 DeactivateBullet();
                 Destroy(gameObject);
             }
-            else if (other.TryGetComponent(out Box box))
+            
+            if (other.TryGetComponent(out Box box))
             {
                 Pool.Instance.SpawnObject(transform.position, PoolItemType.WallParticle, null, 1.0f);
                 box.GotHit(hitValue);
                 DeactivateBullet();
             }
-            else if (other.TryGetComponent(out Wall wall))
+            
+            if (other.TryGetComponent(out Wall wall))
             {
-                TakeDamage(wall.damage);
-                Pool.Instance.SpawnObject(transform.position, PoolItemType.WallParticle, null, 1.0f);
-                wall.transform.DOScale(transform.localScale * 1.3f, 0.015f).SetEase(Ease.Linear).OnStepComplete(() => transform.DOScale(Vector3.zero, 0.15f));
                 if (wall.TryGetComponent(out Collider wCollider)) wCollider.enabled = false;
+                Pool.Instance.SpawnObject(transform.position, PoolItemType.WallParticle, null, 1.0f);
+                wall.transform.DOScale(wall.transform.localScale * 1.3f, 0.015f).SetEase(Ease.Linear).OnStepComplete(() => wall.transform.DOScale(Vector3.zero, 0.15f));
+                TakeDamage(wall.damage);
             }
-            else if (other.TryGetComponent(out DoorBulletSize doorBulletSize) 
+            
+            if (other.TryGetComponent(out DoorBulletSize doorBulletSize) 
                      && other.TryGetComponent(out DoorFireRate doorFireRate))
             {
                 DeactivateBullet();

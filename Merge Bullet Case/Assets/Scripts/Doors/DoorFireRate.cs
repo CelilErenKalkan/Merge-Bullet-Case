@@ -6,15 +6,12 @@ namespace Doors
 {
     public class DoorFireRate : DoorController
     {
-        private LevelManager levelManager;
-    
         public float addFireRate,minFireRate,maxFireRate;
         public Material positiveTextBGMat, negativeTextBGMat;
         public Material positiveDoorBGMat, negativeDoorBGMat;
 
         private void Start()
         {
-            levelManager = LevelManager.Instance;
             SetSpecialProperties();
             SetGeneralProperties();
             SetPositiveNegativeDoors(negativeTextBGMat, negativeDoorBGMat, positiveTextBGMat, positiveDoorBGMat);

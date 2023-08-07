@@ -1,5 +1,5 @@
 using DG.Tweening;
-using Gameplay;
+using Managers;
 using UnityEngine;
 
 namespace Doors
@@ -14,6 +14,8 @@ namespace Doors
     
     public class DoorController : MonoBehaviour
     {
+        protected LevelManager levelManager;
+        
         public DoorType doorType;
         public string doorName;
         public bool isPositive;
@@ -25,12 +27,13 @@ namespace Doors
         public TMPro.TextMeshPro nameText;
         public GameObject textBG, doorBG;
 
-        public void SetGeneralProperties()
+        protected void SetGeneralProperties()
         {
+            levelManager = LevelManager.Instance;
             nameText.text = doorName;
         }
 
-        public void SetPositiveNegativeDoors(Material negativeTextBGMat,Material negativeDoorBGMat,Material positiveTextBGMat,Material positiveDoorBGMat)
+        protected void SetPositiveNegativeDoors(Material negativeTextBGMat,Material negativeDoorBGMat,Material positiveTextBGMat,Material positiveDoorBGMat)
         {
             rnd = Random.Range(0, 2);
             if (rnd == 0) //Negative
@@ -45,14 +48,14 @@ namespace Doors
             }
         }
 
-        public void SetPositiveColor (Material positiveTextBGMat, Material positiveDoorBGMat)
+        protected void SetPositiveColor (Material positiveTextBGMat, Material positiveDoorBGMat)
         {
             isPositive = true;
             textBG.GetComponent<Renderer>().sharedMaterial = positiveTextBGMat;
             doorBG.GetComponent<Renderer>().sharedMaterial = positiveDoorBGMat;
         }
-   
-        public int SetInitialValues(int min,int max,int  value)
+
+        protected int SetInitialValues(int min,int max,int  value)
         {
             value = Random.Range(min, max);
             if (!isPositive)
@@ -62,13 +65,13 @@ namespace Doors
             return value;
         }
 
-        public void ValueTextAnim()
+        protected void ValueTextAnim()
         {
             DOTween.Complete(this);
             valueText.transform.DOScale(startSize * 1.5f, 0.05f).OnStepComplete(() => valueText.transform.DOScale(startSize, 0.05f));
         }
 
-        public void CloseDoor()
+        protected void CloseDoor()
         {
             gameObject.SetActive(false);
         }
