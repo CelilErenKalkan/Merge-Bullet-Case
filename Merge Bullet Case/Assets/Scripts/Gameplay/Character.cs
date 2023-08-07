@@ -85,7 +85,7 @@ namespace Gameplay
             if (isTouching)
             {
                 currentTouch = Input.mousePosition;
-                xDifference = (currentTouch.x - firstTouch.x) * 1000f / Screen.width;
+                xDifference = (currentTouch.x - firstTouch.x) * 100f / Screen.width;
                 xDifference = Mathf.Clamp(xDifference, -1, 1); //Clamp Side acceleration
                 Vector3 newPos = transform.position + new Vector3(xDifference, 0, 0);
                 transform.position = Vector3.Lerp(transform.position, new Vector3(newPos.x, transform.position.y, transform.position.z), sideSpeed * Time.deltaTime);// MoveSpeed = 11

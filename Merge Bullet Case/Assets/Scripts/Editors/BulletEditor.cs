@@ -1,3 +1,4 @@
+using DG.Tweening;
 using Gameplay;
 using Managers;
 using UnityEngine;
@@ -40,9 +41,7 @@ namespace Editors
         
                 // Get and set grid controller
                 var currentGridController = gridManager.grids[bulletSave.GridNum].GetComponent<Grid>();
-                currentBulletScript.GetGrid();
                 currentBulletScript.gridNum = bulletSave.GridNum;
-                currentBulletScript.pos = currentBulletScript.currentGrid.pos;
 
                 // Set Grid Settings
                 currentGridController.bulletType = currentBulletScript.bulletType;
@@ -51,7 +50,10 @@ namespace Editors
         
                 // Parent bullet to the grid
                 currentBulletObject.transform.SetParent(currentGridController.transform);
+                currentBulletScript.GetGrid();
+                currentBulletScript.pos = currentBulletScript.currentGrid.pos;
                 currentBulletObject.transform.localPosition = Vector3.zero;
+                currentBulletScript.transform.DORotate(new Vector3(60, -90, -90), 0.1f);
             }
         }
         
@@ -116,6 +118,7 @@ namespace Editors
                 //Set bullet properties
                 tempBullet.transform.SetParent(tempGrid.transform);
                 tempBullet.transform.localPosition = Vector3.zero;
+                tempBullet.transform.DORotate(new Vector3(60, -90, -90), 0.1f);
                 bullet.gridNum = gridManager.grids.IndexOf(tempGrid);
                 bullet.bulletType = levelManager.levelEditor.creatingBulletType;
                 bullet.hitValue = levelManager.levelEditor.bulletDatas[levelManager.levelEditor.creatingBulletType - 1]
@@ -154,6 +157,7 @@ namespace Editors
             mergedBullet.hitValue = levelManager.levelEditor.bulletDatas[firstBullet.bulletType].hitValue;
             mergedBullet.hp = levelManager.levelEditor.bulletDatas[firstBullet.bulletType].hp;
             mergedBullet.GetGrid();
+            mergedBullet.transform.DORotate(new Vector3(60, -90, -90), 0.1f);
             gameManager.bullets.Add(mergedBullet);
             
             // Remove the merged bullets from the bullets list

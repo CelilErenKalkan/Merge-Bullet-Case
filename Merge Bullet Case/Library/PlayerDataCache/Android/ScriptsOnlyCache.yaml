@@ -9,6 +9,7 @@ ScriptsOnlyBuild:
     - Gameplay.Box
     - Gameplay.Bullet
     - Gameplay.Character
+    - Gameplay.Spawner
     - Gameplay.Wall
     - Managers.CameraManager
     - Managers.GameManager
@@ -20,7 +21,6 @@ ScriptsOnlyBuild:
     - Utils.BulletRangeSettings
     - Utils.Grid
     - Utils.Money
-    - Wall.Spawner
     Cinemachine.dll:
     - Cinemachine.CinemachineBrain
     - Cinemachine.CinemachineComposer
@@ -261,7 +261,7 @@ ScriptsOnlyBuild:
       serializedVersion: 2
       Hash: be198c1e76a34f8de1c9bf9daece7b0c
     assemblyName: Assembly-CSharp.dll
-    namespaceName: Wall
+    namespaceName: Gameplay
     className: Spawner
   - hash:
       serializedVersion: 2
