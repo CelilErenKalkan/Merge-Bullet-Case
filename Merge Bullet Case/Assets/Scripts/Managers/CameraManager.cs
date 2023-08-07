@@ -30,8 +30,8 @@ namespace Managers
 
         public void SetGameplayCamera()
         {
-            transform.DOMoveX(gameplayCamX, 0.5f);
-            transform.DOMoveY(gameplayCamY, 0.5f);
+            transform.DOMoveX(gameplayCamX, 1);
+            transform.DOMoveY(gameplayCamY, 1);
             transform.DORotate(gameplayCamRot, 0.5f);
         }
 

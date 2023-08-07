@@ -140,9 +140,26 @@ namespace Managers
 
         private void SetDoors()
         {
+            var isTripleShotDoor = false;
+
             for (var i = 0; i < doorNum; i++)
             {
-                currentDoor = pool.SpawnObject(Vector3.zero, PoolItemType.Doors, null);
+                int randomDoorType;
+                
+                if (!isTripleShotDoor)
+                {
+                    var tripleChance = Random.Range(0, 100);
+                    if (tripleChance <= 40)
+                        isTripleShotDoor = true;
+
+                    randomDoorType = 3;
+                }
+                else
+                {
+                    randomDoorType = Random.Range(0, 2);
+                }
+                
+                currentDoor = pool.SpawnObject(Vector3.zero, PoolItemType.Doors, null, randomDoorType);
 
                 currentDoor.transform.position = Random.Range(0, 2) switch
                 {

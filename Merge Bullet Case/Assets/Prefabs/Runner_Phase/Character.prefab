@@ -49,7 +49,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   forwardSpeed: 8
-  sideSpeed: 8
+  sideSpeed: 12
   firePoint: {fileID: 1198869680106597210}
   hitValue: 0
   bulletType: 0
