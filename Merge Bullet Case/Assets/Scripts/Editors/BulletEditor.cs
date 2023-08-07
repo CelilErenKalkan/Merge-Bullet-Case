@@ -40,7 +40,7 @@ namespace Editors
         
                 // Get and set grid controller
                 var currentGridController = gridManager.grids[bulletSave.GridNum].GetComponent<Grid>();
-                currentBulletScript.GetGridController();
+                currentBulletScript.GetGrid();
                 currentBulletScript.gridNum = bulletSave.GridNum;
                 currentBulletScript.pos = currentBulletScript.currentGrid.pos;
 
@@ -90,7 +90,7 @@ namespace Editors
             cameraManager.SetTarget(unbeatableBullet.transform);
             
             //Set Wall Length
-            return unbeatableBullet.hp - 2;
+            return unbeatableBullet.hp / 2;
         }
         
         public static void AddBullet()
@@ -122,7 +122,7 @@ namespace Editors
                     .hitValue;
                 bullet.hp = levelManager.levelEditor.bulletDatas[levelManager.levelEditor.creatingBulletType - 1].hp;
                 bullet.pos = grid.pos;
-                bullet.GetGridController();
+                bullet.GetGrid();
 
                 gameManager.bullets.Add(bullet);
                 
@@ -140,6 +140,7 @@ namespace Editors
 
             // Reset the grid of the first bullet
             firstBullet.ResetGrid();
+            secondBullet.ResetGrid();
 
             // Create the merged bullet
             GameObject mergedBulletObject = Pool.Instance.SpawnObject(secondBullet.transform.position,
@@ -152,7 +153,7 @@ namespace Editors
             mergedBullet.bulletType = levelManager.levelEditor.bulletDatas[firstBullet.bulletType].type;
             mergedBullet.hitValue = levelManager.levelEditor.bulletDatas[firstBullet.bulletType].hitValue;
             mergedBullet.hp = levelManager.levelEditor.bulletDatas[firstBullet.bulletType].hp;
-            mergedBullet.GetGridController();
+            mergedBullet.GetGrid();
             gameManager.bullets.Add(mergedBullet);
             
             // Remove the merged bullets from the bullets list

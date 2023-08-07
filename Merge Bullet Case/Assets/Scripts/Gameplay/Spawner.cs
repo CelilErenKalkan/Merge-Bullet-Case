@@ -1,10 +1,9 @@
 using Editors;
-using Gameplay;
 using Managers;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace Wall
+namespace Gameplay
 {
     public class Spawner : MonoSingleton<Spawner>
     {
@@ -57,7 +56,7 @@ namespace Wall
                     position = Vector3.zero
                 }
             }.transform;
-
+            
             row = BulletEditor.CreateInitialBullets(startBulletsParent);
             SpawnWall();
         }

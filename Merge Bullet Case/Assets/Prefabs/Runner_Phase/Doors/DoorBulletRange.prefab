@@ -183,7 +183,7 @@ GameObject:
   - component: {fileID: 3244067286520090030}
   m_Layer: 0
   m_Name: DoorBulletRange
-  m_TagString: Door
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -226,7 +226,6 @@ MonoBehaviour:
   nameText: {fileID: 466026005}
   textBG: {fileID: 4195994423769263441}
   doorBG: {fileID: 8528037360770487507}
-  tempBulletController: {fileID: 0}
   addRange: 0
   minRange: 10
   positiveTextBGMat: {fileID: 2100000, guid: b3cccfbb953725c4184c88574b2e2aa1, type: 2}

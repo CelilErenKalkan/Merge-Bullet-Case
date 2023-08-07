@@ -15,65 +15,57 @@ namespace Managers
         private GameManager gameManager;
         private Pool pool;
         private StartBullets startBullets;
-        
+
         [HideInInspector] public int collectedMoney;
         [HideInInspector] public Vector3 playerStartPos;
 
-        [Header("Character Variables")]
-        private Character character;
+        [Header("Character Variables")] private Character character;
         public bool isStartCharacterMovement, isTripleShot;
         public List<Character> characterList = new List<Character>();
 
-        [Header("Serialization")]
-        public GameObject finishLine;
+        [Header("Serialization")] public GameObject finishLine;
         public Transform platform;
-        
+
         [Header("Level Editor and Database Variables")]
         public LevelEditor levelEditor;
+
         public DataBase dataBase;
 
-        [Header("Bullet Variables")]
-        public float bulletSize, fireRate;
+        [Header("Bullet Variables")] public float bulletSize, fireRate;
 
-        [Header("Doors Variables")]
-        public int doorNum, doorDistance;
+        [Header("Doors Variables")] public int doorNum, doorDistance;
         private GameObject currentDoor;
         [SerializeField] private GameObject levelObject;
 
-        [Header("Boxes Variables")]
-        public int boxNum;
+        [Header("Boxes Variables")] public int boxNum;
         public int boxDistance, boxHp;
-        
+
         //Box
         private GameObject currenBox;
         private float boxXPos;
 
-        [Header("Score Variables")]
-        public int goldValue;
+        [Header("Score Variables")] public int goldValue;
         public GameObject highScoreObject;
 
         private void Awake()
         {
             DOTween.SetTweensCapacity(500, 50);
+            
+            gameManager = GameManager.Instance;
+            pool = Pool.Instance;
+            
+            LoadData();
+            BulletEditor.SetBulletEditor();
         }
 
         private void OnEnable()
         {
             Actions.LevelStart += StartLevel;
         }
-        
+
         private void OnDisable()
         {
             Actions.LevelStart -= StartLevel;
-        }
-
-        private void Start()
-        {
-            var db = FileHandler.ReadFromJson<DataBase>("data");
-            dataBase = db;
-            BulletEditor.SetBulletEditor();
-            gameManager = GameManager.Instance;
-            pool = Pool.Instance;
         }
 
         public void StartCharacterMovement(Character currentCharacter)
@@ -103,32 +95,32 @@ namespace Managers
                 if (characterList[i].isPlay)
                 {
                     var z = characterList[i].transform.position.z;
-                    
+
                     float x;
                     if (characterCount / 2 == 0)
                     {
                         x = characterCount * 1.5f;
-                        characterCount ++;
+                        characterCount++;
                     }
                     else
                     {
                         x = characterCount * -1.5f;
                     }
-                    
+
                     characterList[i].transform.DOMove(new Vector3(x, 1, z + 5), 0.95f);
                 }
             }
-            
+
             yield return new WaitForSeconds(1);
-            
+
             cameraManager.SetTarget(character.transform);
             gameManager.SetPlayable(true);
         }
 
         private void StartLevel()
         {
-            FileHandler.SaveToJson(dataBase, "data");
-            
+            SaveSystem();
+
             if (gameManager.bullets.Count > 0)
             {
                 DOTween.KillAll();
@@ -137,7 +129,7 @@ namespace Managers
                 BulletEditor.SetBulletEditor();
             }
         }
-        
+
         public void DesignLevel(Vector3 playerPos)
         {
             playerStartPos = playerPos;
@@ -180,34 +172,36 @@ namespace Managers
                         1 => 0,
                         _ => 3.5f
                     };
-                    currenBox.transform.position = new Vector3(boxXPos, 2.55f, finishLine.transform.position.z + boxDistance + boxDistance * i);
+                    currenBox.transform.position = new Vector3(boxXPos, 2.55f,
+                        finishLine.transform.position.z + boxDistance + boxDistance * i);
                 }
             }
-            
+
             finishLine.transform.position = new Vector3(0, 0.5f, currenBox.transform.position.z + boxDistance * 3);
-            platform.localScale = new Vector3(platform.localScale.x, platform.localScale.y, currenBox.transform.position.z + 100);
+            platform.localScale = new Vector3(platform.localScale.x, platform.localScale.y,
+                currenBox.transform.position.z + 100);
         }
-        
+
         private void SetHighScore()
         {
             if (dataBase.highScore == 0) return;
-            
+
             highScoreObject.transform.position = new Vector3(-5, 0, dataBase.highScore);
             highScoreObject.SetActive(true);
         }
 
         public void SaveSystem()
         {
-            if (dataBase == null)
+            dataBase ??= new DataBase
             {
-                Debug.LogError("No dataBase reference found. Unable to save.");
-                return;
-            }
+                money = 100
+            };
 
             // Clear the existing bullet saves (if needed)
             dataBase.bulletSaves.Clear();
 
             // Save the bullet data
+
             foreach (var bullet in gameManager.bullets)
             {
                 if (bullet == null)
@@ -227,7 +221,16 @@ namespace Managers
             }
 
             // Save the dataBase to a JSON file
-            FileHandler.SaveToJson(dataBase, "data");
+            FileHandler.SaveToJson(dataBase, "data.json");
+        }
+
+        private void LoadData()
+        {
+            dataBase = FileHandler.ReadFromJson<DataBase>("data.json");
+
+            if (dataBase != null) return;
+            SaveSystem();
+            dataBase.money = 1000;
         }
     }
 }

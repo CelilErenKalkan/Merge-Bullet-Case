@@ -78,10 +78,14 @@ namespace Gameplay
             }
         }
 
-        public void GetGridController()
+        public void GetGrid()
         {
             if (transform.parent.TryGetComponent(out Grid grid))
+            {
                 currentGrid = grid;
+                currentGrid.gridSit = GridSit.Fill;
+                currentGrid.bulletType = bulletType;
+            }
         }
         
         public void ResetGrid()
@@ -93,7 +97,7 @@ namespace Gameplay
 
         private void PutDown()
         {
-            GetGridController();
+            GetGrid();
             
             if (targetGrid.gridSit.Equals(GridSit.Empty)) //Empty Movement
             {

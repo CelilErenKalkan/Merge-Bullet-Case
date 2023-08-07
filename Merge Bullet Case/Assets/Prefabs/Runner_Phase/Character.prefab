@@ -27,7 +27,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1198869679346420464}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 55.5}
+  m_LocalPosition: {x: 0, y: 0, z: 43.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1198869679510942021}
@@ -48,12 +48,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba6c8cf473fc08c40b8689eb38c14bbd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  forwardSpeed: 10
+  forwardSpeed: 8
   sideSpeed: 15
   firePoint: {fileID: 1198869680106597210}
   hitValue: 0
   bulletType: 0
-  isTripleShot: 0
   isPlay: 0
 --- !u!136 &1198869679346420467
 CapsuleCollider:

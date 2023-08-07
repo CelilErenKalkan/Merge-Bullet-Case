@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 2966470612046911917}
   m_Layer: 0
   m_Name: DoorFireRate
-  m_TagString: Door
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -56,7 +56,6 @@ MonoBehaviour:
   nameText: {fileID: 6861424483025913277}
   textBG: {fileID: 4195994423769263441}
   doorBG: {fileID: 8528037360770487507}
-  tempBulletController: {fileID: 0}
   addFireRate: 0
   minFireRate: 0.05
   maxFireRate: 1.2

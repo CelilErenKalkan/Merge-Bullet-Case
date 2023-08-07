@@ -19,6 +19,8 @@ namespace Managers
         {
             levelManager = LevelManager.Instance;
             SetMoneyText(levelManager.dataBase.money);
+            if (levelManager.dataBase.bulletSaves.Count <= 0)
+                startButton.SetActive(false);
         }
         
         
@@ -60,6 +62,7 @@ namespace Managers
             Actions.ButtonTapped?.Invoke();
             BulletEditor.AddBullet();
             SetMoneyText(levelManager.dataBase.money);
+            startButton.SetActive(true);
         }
 
         private void SetMoneyText(int money)
