@@ -42,6 +42,7 @@ namespace Managers
         
         public void RestartGame()
         {
+            Actions.ButtonTapped?.Invoke();
             SceneManager.LoadScene(0);
         }
 
@@ -56,6 +57,7 @@ namespace Managers
 
         public void AddBullet()
         {
+            Actions.ButtonTapped?.Invoke();
             BulletEditor.AddBullet();
             SetMoneyText(levelManager.dataBase.money);
         }

@@ -181,11 +181,13 @@ namespace Gameplay
         {
             if (other.TryGetComponent(out Grid grid))
             {
+                Actions.LightImpact?.Invoke();
                 targetGrid = grid;
             }
             
             if (other.TryGetComponent(out Character character) && isGameBullet)
             {
+                Actions.MediumImpact?.Invoke();
                 isGameBullet = false;
                 character.hitValue += hitValue;
                 character.bulletType = bulletType;
@@ -197,6 +199,7 @@ namespace Gameplay
             
             if (other.TryGetComponent(out Box box))
             {
+                Actions.LightImpact?.Invoke();
                 Pool.Instance.SpawnObject(transform.position, PoolItemType.WallParticle, null, 1.0f);
                 box.GotHit(hitValue);
                 DeactivateBullet();
@@ -204,6 +207,7 @@ namespace Gameplay
             
             if (other.TryGetComponent(out Wall wall))
             {
+                Actions.LightImpact?.Invoke();
                 if (wall.TryGetComponent(out Collider wCollider)) wCollider.enabled = false;
                 Pool.Instance.SpawnObject(transform.position, PoolItemType.WallParticle, null, 1.0f);
                 wall.transform.DOScale(wall.transform.localScale * 1.3f, 0.015f).SetEase(Ease.Linear).OnStepComplete(() => wall.transform.DOScale(Vector3.zero, 0.15f));

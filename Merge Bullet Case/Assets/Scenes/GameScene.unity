@@ -136,6 +136,7 @@ GameObject:
   - component: {fileID: 28275014}
   - component: {fileID: 28275013}
   - component: {fileID: 28275015}
+  - component: {fileID: 28275016}
   m_Layer: 0
   m_Name: Manager
   m_TagString: Untagged
@@ -257,6 +258,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   collectedMoney: 0
   playerStartPos: {x: 0, y: 0, z: 0}
+  isStartCharacterMovement: 0
+  isTripleShot: 0
   characterList: []
   finishLine: {fileID: 1926362747}
   platform: {fileID: 138383162}
@@ -303,6 +306,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   grids: []
   emptyGrids: []
+--- !u!114 &28275016
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 28275010}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55006d6ef0b4745499bc1a5cef555715, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &94634964
 PrefabInstance:
   m_ObjectHideFlags: 0
