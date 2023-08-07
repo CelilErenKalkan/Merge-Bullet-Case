@@ -7,17 +7,22 @@ namespace Editors
     public class DataBase
     {
         [System.Serializable]
-        public struct BulletSave
+        public struct BulletData
         {
             public int type;
-            public int GridNum;
-            public int hp;
+            public int gridNum;
+            public int healthPoints;
             public int hitValue;
-            public Vector2 pos;
+            public Vector2 position;
         }
 
-        public List<BulletSave> bulletSaves = new List<BulletSave>();
+        // List of saved bullet data
+        public List<BulletData> bulletDataList = new List<BulletData>();
+
+        // Player's in-game currency
         public int money;
+
+        // Player's high score
         public float highScore;
     }
 }

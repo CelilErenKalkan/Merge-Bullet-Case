@@ -13,36 +13,47 @@ namespace Managers
 
     public class GridManager : MonoSingleton<GridManager>
     {
+        // References to managers
         private LevelManager levelManager;
         private Pool pool;
-        
+
+        // Parent for organizing grid objects
         private GameObject gridsParent;
+
+        // Lists of grid objects
         [HideInInspector] public List<GameObject> grids = new List<GameObject>();
         [HideInInspector] public List<GameObject> emptyGrids = new List<GameObject>();
 
-
         private void Awake()
         {
+            // Initialize references to managers
             levelManager = LevelManager.Instance;
             pool = Pool.Instance;
-            
-            gridsParent = new GameObject
-            {
-                name = "Grids",
-                transform = { position = Vector3.zero }
-            };
 
+            // Create parent for grid objects
+            gridsParent = CreateParentTransform("Grids");
+
+            // Create and set up grid objects
             CreateGrids();
         }
-        
+
         private void OnEnable()
         {
             Actions.LevelStart += DeactivateGrids;
         }
-        
+
         private void OnDisable()
         {
             Actions.LevelStart -= DeactivateGrids;
+        }
+
+        private GameObject CreateParentTransform(string name)
+        {
+            return new GameObject
+            {
+                name = name,
+                transform = { position = Vector3.zero }
+            };
         }
 
         private void CreateGrids()
@@ -51,12 +62,12 @@ namespace Managers
             {
                 for (var j = 0; j < levelManager.levelEditor.gridColumn; j++)
                 {
-                    //Call Grids
+                    // Spawn Grids
                     var tempGrid = pool.SpawnObject(Vector3.zero, PoolItemType.Grid, gridsParent.transform);
                     tempGrid.transform.position = levelManager.levelEditor.gridStartPoint +
                                                   new Vector3(j, -i, 0) * tempGrid.transform.localScale.x * 2;
 
-                    //Set grid properties
+                    // Set grid properties
                     grids.Add(tempGrid);
                     tempGrid.GetComponent<Grid>().gridNum = grids.IndexOf(tempGrid);
                     tempGrid.GetComponent<Grid>().pos = new Vector2(j, -i);

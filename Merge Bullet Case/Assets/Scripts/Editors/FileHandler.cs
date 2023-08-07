@@ -9,66 +9,62 @@ namespace Editors
     public static class FileHandler
     {
         /// <summary>
-        /// Saves the list as a json file.
+        /// Save a list of items as a JSON file.
         /// </summary>
-        /// <returns></returns>
-        public static void SaveListToJson<T>(List<T> toSave, string fileName)
+        public static void SaveListToJson<T>(List<T> itemsToSave, string fileName)
         {
-            string content = JsonHelper.ToJson<T>(toSave.ToArray());
-            WriteFile(GetPath(fileName), content);
+            string jsonContent = JsonHelper.ToJson<T>(itemsToSave.ToArray());
+            WriteFile(GetPath(fileName), jsonContent);
         }
 
         /// <summary>
-        /// Saves the variable with the given type as a json file.
+        /// Save a single item of given type as a JSON file.
         /// </summary>
-        /// <returns></returns>
-        public static void SaveToJson<T>(T toSave, string fileName)
+        public static void SaveToJson<T>(T itemToSave, string fileName)
         {
-            string content = JsonUtility.ToJson(toSave);
-            WriteFile(GetPath(fileName), content);
+            string jsonContent = JsonUtility.ToJson(itemToSave);
+            WriteFile(GetPath(fileName), jsonContent);
         }
     
         /// <summary>
-        /// returns a list with the given file name.
+        /// Read a list of items from a JSON file.
         /// </summary>
-        /// <returns></returns>
         public static List<T> ReadListFromJson<T>(string fileName)
         {
-            string content = ReadFile(GetPath(fileName));
+            string jsonContent = ReadFile(GetPath(fileName));
 
-            if (string.IsNullOrEmpty(content) || content == "{}") return new List<T>();
+            if (string.IsNullOrEmpty(jsonContent) || jsonContent == "{}")
+                return new List<T>();
 
-            List<T> res = JsonHelper.FromJson<T>(content).ToList();
-            return res;
+            List<T> result = JsonHelper.FromJson<T>(jsonContent).ToList();
+            return result;
         }
     
         /// <summary>
-        /// returns a variable with the desired type.
+        /// Read a single item of desired type from a JSON file.
         /// </summary>
-        /// <returns></returns>
         public static T ReadFromJson<T>(string fileName)
         {
-            string content = ReadFile(GetPath(fileName));
+            string jsonContent = ReadFile(GetPath(fileName));
 
-            if (string.IsNullOrEmpty(content) || content == "{}") return default(T);
+            if (string.IsNullOrEmpty(jsonContent) || jsonContent == "{}")
+                return default(T);
 
-            T res = JsonUtility.FromJson<T>(content);
-            return res;
+            T result = JsonUtility.FromJson<T>(jsonContent);
+            return result;
         }
 
         /// <summary>
-        /// Returns the save path as a string.
+        /// Get the full path for a file in the persistent data path.
         /// </summary>
-        /// <returns></returns>
         private static string GetPath(string fileName)
         {
             return Application.persistentDataPath + "/" + fileName;
         }
 
         /// <summary>
-        /// Saves the file into the given path.
+        /// Write content to a file at the specified path.
         /// </summary>
-        /// <returns></returns>
         private static void WriteFile(string path, string content)
         {
             FileStream fileStream = new FileStream(path, FileMode.Create);
@@ -82,9 +78,8 @@ namespace Editors
         }
 
         /// <summary>
-        /// Returns the file as a string from the given path.
+        /// Read the content of a file from the specified path.
         /// </summary>
-        /// <returns></returns>
         private static string ReadFile(string path)
         {
             if (File.Exists(path))
@@ -102,30 +97,39 @@ namespace Editors
 
     public static class JsonHelper
     {
+        /// <summary>
+        /// Convert JSON string to an array of objects of the specified type.
+        /// </summary>
         public static T[] FromJson<T>(string json)
         {
             Wrapper<T> wrapper = JsonUtility.FromJson<Wrapper<T>>(json);
-            return wrapper.Items;
+            return wrapper.items;
         }
 
+        /// <summary>
+        /// Convert an array of objects of the specified type to JSON string.
+        /// </summary>
         public static string ToJson<T>(T[] array)
         {
             Wrapper<T> wrapper = new Wrapper<T>();
-            wrapper.Items = array;
+            wrapper.items = array;
             return JsonUtility.ToJson(wrapper);
         }
 
+        /// <summary>
+        /// Convert an array of objects of the specified type to JSON string with optional formatting.
+        /// </summary>
         public static string ToJson<T>(T[] array, bool prettyPrint)
         {
             Wrapper<T> wrapper = new Wrapper<T>();
-            wrapper.Items = array;
+            wrapper.items = array;
             return JsonUtility.ToJson(wrapper, prettyPrint);
         }
 
         [Serializable]
         private class Wrapper<T>
         {
-            public T[] Items;
+            public T[] items;
         }
     }
 }

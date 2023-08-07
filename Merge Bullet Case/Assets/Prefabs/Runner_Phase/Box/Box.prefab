@@ -283,7 +283,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hp: 0
   hpText: {fileID: 8213117350161253423}
-  golds: {fileID: 3567148027882469916}
+  goods: {fileID: 3567148027882469916}
 --- !u!1001 &6405238310968617989
 PrefabInstance:
   m_ObjectHideFlags: 0
