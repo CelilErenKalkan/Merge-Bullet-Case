@@ -196,6 +196,7 @@ namespace Gameplay
                 character.hitValue += hitValue;
                 character.bulletType = bulletType;
                 character.isPlay = true;
+                CameraManager.Instance.SetGameplayCamera();
                 levelManager.StartCharacterMovement(character);
                 DeactivateBullet();
                 Destroy(gameObject);
@@ -221,6 +222,7 @@ namespace Gameplay
             if (other.TryGetComponent(out DoorBulletSize doorBulletSize) 
                      && other.TryGetComponent(out DoorFireRate doorFireRate))
             {
+                Actions.LightImpact?.Invoke();
                 DeactivateBullet();
             }
         }

@@ -117,9 +117,9 @@ namespace Gameplay
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.TryGetComponent(out Money coin))
+            if (other.TryGetComponent(out Money money))
             {
-                Destroy(coin.gameObject);
+                Destroy(money.gameObject);
                 Actions.LightImpact?.Invoke();
                 Pool.Instance.SpawnObject(transform.position, PoolItemType.MoneyParticle, null, 1.0f);
                 levelManager.collectedMoney += levelManager.goldValue;
