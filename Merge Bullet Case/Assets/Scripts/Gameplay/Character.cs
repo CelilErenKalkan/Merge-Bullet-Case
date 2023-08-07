@@ -119,6 +119,7 @@ namespace Gameplay
         {
             if (other.TryGetComponent(out Money coin))
             {
+                Destroy(coin.gameObject);
                 Actions.LightImpact?.Invoke();
                 Pool.Instance.SpawnObject(transform.position, PoolItemType.MoneyParticle, null, 1.0f);
                 levelManager.collectedMoney += levelManager.goldValue;
