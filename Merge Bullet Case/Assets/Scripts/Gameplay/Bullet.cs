@@ -1,4 +1,5 @@
 using System.Collections;
+using Doors;
 using Editors;
 using Managers;
 using UnityEngine;
@@ -21,7 +22,7 @@ namespace Gameplay
         Vector3 worldPosition;
         private bool isOnTouch, isForwardFire, isRightTripleFire, isLeftTripleFire;
         [HideInInspector] public bool isUnbeatable;
-        private const float BulletSpeed = 20;
+        private const float BulletSpeed = 25;
         private float previousXPos, previousZPos, nextXPos, nextZPos;
 
         private void Start()
@@ -180,7 +181,6 @@ namespace Gameplay
         {
             if (other.TryGetComponent(out Grid grid))
             {
-                Pool.Instance.SpawnObject(transform.position, PoolItemType.BulletParticle, null, 1.0f);
                 targetGrid = grid;
             }
             else if (other.TryGetComponent(out Character character) && isGameBullet)
@@ -193,14 +193,20 @@ namespace Gameplay
                 DeactivateBullet();
                 Destroy(gameObject);
             }
-            else if (!other.TryGetComponent(out Bullet bullet) 
-                     && !other.TryGetComponent(out Coin coin))
+            else if (other.TryGetComponent(out DoorBulletSize doorBulletSize) 
+                     && other.TryGetComponent(out DoorFireRate doorFireRate))
             {
-                Pool.Instance.SpawnObject(transform.position, PoolItemType.WallParticle, null, 1.0f);
                 DeactivateBullet();
             }
         }
 
+        public void TakeDamage(int damage)
+        {
+            hp -= damage;
+            if (hp <= 0)
+                DeactivateBullet();
+        }
+        
         public void DeactivateBullet()
         {
             if (isUnbeatable) return;

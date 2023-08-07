@@ -90,7 +90,7 @@ namespace Editors
             cameraManager.SetTarget(unbeatableBullet.transform);
             
             //Set Wall Length
-            return unbeatableBullet.hp + 2;
+            return unbeatableBullet.hp - 2;
         }
         
         public static void AddBullet()

@@ -1,6 +1,6 @@
 using Gameplay;
-using Player;
 using UnityEngine;
+using Utils;
 
 namespace Doors
 {

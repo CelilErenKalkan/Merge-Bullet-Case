@@ -97,12 +97,25 @@ namespace Managers
             startBullets.gameObject.SetActive(false);
 
             //Set Character Settings
+            float characterCount = 0;
             for (var i = characterList.Count - 1; i >= 0; i--)
             {
                 if (characterList[i].isPlay)
                 {
                     var z = characterList[i].transform.position.z;
-                    characterList[i].transform.DOMove(new Vector3(0, 1, z + 5), 0.95f);
+                    
+                    float x;
+                    if (characterCount / 2 == 0)
+                    {
+                        x = characterCount * 1.5f;
+                        characterCount ++;
+                    }
+                    else
+                    {
+                        x = characterCount * -1.5f;
+                    }
+                    
+                    characterList[i].transform.DOMove(new Vector3(x, 1, z + 5), 0.95f);
                 }
             }
             
